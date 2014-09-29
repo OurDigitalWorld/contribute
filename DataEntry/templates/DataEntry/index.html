@@ -1,0 +1,32 @@
+{% extends "DataEntry/header_block.html" %}
+
+
+{% block page_title %}
+   Recent contributions:
+{% endblock %}
+
+{% block head_title %}
+   Recent contributions:
+{% endblock %}
+
+{% block content %}
+    {% if most_recent_contributions %}
+        <ul>
+        {% for records in most_recent_contributions %}
+            <li>
+            {% for ro in records.recordobject_set.all %}
+                {% if ro.record_object_category_id = 0 %}
+
+                <img src="/media/project/{{ ro.file_name }}" />
+                {% endif %}
+            {% endfor %}
+                <a href="{% url 'DataEntry:detail' records.id %}">{{ records.title }}</a>
+            </li>
+        {% endfor %}
+        </ul>
+
+    {% else %}
+        <p>No records are available.</p>
+    {% endif %}
+{% endblock %}
+

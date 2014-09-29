@@ -1,0 +1,11 @@
+{% extends "DataEntry/base.html" %}
+{% block footer %}
+	{% if site_settings.VitaPublicSitePath %}
+	<div id="site_home">
+		<a href="{{site_settings.VitaPublicSitePath}}">{{site_settings.site_name}}</a>
+	</div>
+	{%endif%}
+    <div class="footer">
+      {{ site_settings.SiteBottomMessage|safe }}
+    </div>
+{% endblock %}

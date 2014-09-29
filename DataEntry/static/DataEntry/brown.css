@@ -1,0 +1,85 @@
+/*SITE SELECTIONS: brown */
+/*calls the specific style parameters selected for site branding */
+
+
+/* PAGE STRUCTURE */
+body {
+    background: #fff url(/media/project/BK_paper-brown.jpg) repeat;
+}
+
+#container {
+    position: relative;
+    width: 95%;
+    min-width: 760px;
+	padding: 10px;
+	border-radius:25px;
+	border-left: 1px solid #613C16;
+	margin-right: 15px;
+	margin-left: 15px;
+	background-color: #ffffff;
+	margin-top: 5px;
+	box-shadow: 5px 5px 5px #352719;
+}
+
+
+/* HEADER */
+
+#branding h1 {
+	background: #fff url(/media/project/DigitalTree-with-ODWweb2.gif) no-repeat right top;
+	min-height: 100px;
+	padding: 60px 10px 10px 15px;
+    color: #613C16;
+}
+
+.fieldWrapper label {
+	color: #613C16;
+}
+
+/* FOOTER */
+
+.footer {
+	clear: both;
+	margin-top:15px;
+	margin-bottom:12px;
+	text-align:center;
+	font-size: .8em;
+	color: #F5EACC;
+}
+
+.footerLeft {
+	clear: both;
+	margin-top:15px;
+	margin-bottom: 12px;
+	text-align: left;
+	font-size: .8em;
+	color: #F5EACC;
+	}
+	
+.footerRight {
+	clear: both;
+	margin-top:15px;
+	margin-bottom: 12px;
+	text-align: right;
+	font-size: .8em;
+	color: #F5EACC;
+	}
+	
+/* VITA Footer - appears at the bottom of every public page*/	
+.VTfooter	{
+	margin-top:6px;
+	margin-bottom: 10px;
+	text-align: right;
+	color: #B5B4AF;
+	font: normal .75em "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
+	}
+
+.VTfooter a:link {
+	color: #B5B4AF;
+}
+.VTfooter a:visited {
+	color: #B5B4AF;
+}
+.VTfooter a:hover {
+	color: #B5B4AF;
+}
+

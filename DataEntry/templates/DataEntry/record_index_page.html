@@ -1,0 +1,15 @@
+{% for record in records %}
+    <li>
+        {% for ro in record.recordobject_set.all %}
+            {% ifequal ro.record_object_category_id  0 %}
+                <div class="thumbbox"><a href="/contribute/{{ record.id}}/{{ record.slug }}"><img src="/media/project/{{ ro.file_name }}" /></a></div>
+            {% endifequal %}
+        {% empty %}
+            <div class="thumbbox"><a href="/contribute/{{ record.id}}/{{ record.slug }}"><img src="/media/project/DigitalTree_thumb.gif" /></a></div>
+        {% endfor %}
+
+        <a href="/contribute/{{ record.id}}/{{ record.slug }}">{{ record.title }}</a>
+        <div class="description">{{record.description|truncatewords_html:125}}</div>
+        <div class="description_truncate">{{record.description|truncatewords_html:20}}        </div>
+    </li>
+{% endfor %}

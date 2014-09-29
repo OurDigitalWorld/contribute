@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    {% load staticfiles %}
+     {% block header %}{% endblock %}
+</head>
+<body{% if geodata %} onload="gMapInitialize()"{% elif gMap %} onload="initializeGeography()"{% endif%}  >
+    <div id="container">
+    {% block body_header %}{% endblock %}
+    {% block content %}{% endblock %}
+    </div>
+    {% block footer %}{% endblock %}
+</body>
+</html>

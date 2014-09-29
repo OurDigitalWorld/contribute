@@ -1,0 +1,190 @@
+{% extends "DataEntry/banner_block.html" %}
+
+{% load staticfiles %}
+
+{% block header %}
+    <title>{% block page_title %}{% endblock %}: {{ site_settings.SiteName }}</title>
+    <link rel="stylesheet" type="text/css" href="{% static "css/base.css" %}" />
+    <link rel="stylesheet" type="text/css" href="{% static "css/widgets.css" %}" />
+    <link rel="stylesheet" type="text/css" href="{% static "css/forms.css" %}" />
+    <link rel="stylesheet" type="text/css" href="{% static "css/changelists.css" %}" />
+    <link rel="stylesheet" type="text/css" href="{% static "css/normalize.css" %}" />
+    <link rel="stylesheet" type="text/css" href="{{ site_settings.CSS }}" />
+
+    {# set up jQuery for autocompletes and other purposes #}
+    {# TODO: be more specific about which files need to be loaded?#}
+    {# TODO: ensure that all the jquery is up to the same level  #}
+    {% if jQuery %}
+        <script src="{% static "js/jquery-1.10.2.js" %}" type="text/javascript"></script>
+        <script src="{% static "js/jquery.query-2.1.7.js" %}" type="text/javascript"></script>
+        <script src="{% static "js/jquery-ui-1.10.3.custom.min.js" %}" type="text/javascript"></script>
+        <script src="/jLocal_Autocomplete.js" type="text/javascript"></script>
+        <link rel="stylesheet" type="text/css" href="{% static "css/jquery-ui-1.10.4.custom.min.css" %}" />
+
+    {% endif %}
+
+    {# <script type="text/javascript" src="{% static "js/modernizr.custom.29473.js" %}"></script> #}
+
+
+    {# TODO: deal with the option to have lat long in the individual records; or more than one lat/long #}
+ {# generate the google map if we were able to get geodata back from solr=>geonames #}
+    {% if gMap %}
+	   <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+	   <script type="text/javascript">
+		  function gMapInitialize() {
+			//set map generically
+			var myOptions = {
+			  zoom: 0,
+			  center: new google.maps.LatLng(0,0),
+			  mapTypeId: google.maps.MapTypeId.SATELLITE
+			};
+			//this may have to move down
+			var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+
+			//parse the lat, lng and place names put in the html by autocomplete
+		  	var alatlngbounds = new Array();
+		  	//value stored in HTML with a trailing semi-colon
+		    var geoLatLng = (document.getElementById("geoLatLng").innerText||document.getElementById("geoLatLng").textContent)
+		    geoLatLng = geoLatLng.substring(0, geoLatLng.length - 1);
+		    //split of remaining semis, if any
+		    var aGeoLatLng = geoLatLng.split(";");
+		    for (var i = 0; i < aGeoLatLng.length; i++)
+				{
+					var aLatLong = aGeoLatLng[i].split("|");
+					var Lat = aLatLong[0];
+					var Long = aLatLong[1];
+					var PlaceName = aLatLong[2];
+					var latlngmark = new google.maps.LatLng(Lat, Long);
+					// add to the array we'll use for the bounds
+					alatlngbounds.push(latlngmark);
+					// establish individual markers
+					var marker = new google.maps.Marker({
+					  position: latlngmark,
+					  map: map,
+					  title:PlaceName
+					});
+				};
+			var latlngbounds = new google.maps.LatLngBounds();
+			for (var i = 0; i < alatlngbounds.length; i++){
+				latlngbounds.extend(alatlngbounds[i]);
+			}
+			map.fitBounds(latlngbounds);
+			var blistener = google.maps.event.addListener((map), 'bounds_changed', function(event) {
+				if (this.getZoom() > 11){
+					this.setZoom(11);
+				}
+				google.maps.event.removeListener(blistener);
+			});
+			google.maps.event.trigger(map, 'resize');
+			map.setZoom(map.getZoom() );
+		  }
+		</script>
+    {% endif %}
+
+    {% if showProvince %}
+        <script type="text/javascript">
+        $(document).ready(function(){
+			$('#countryID').show();
+			$('#province').hide();
+			$('#state').hide();
+			$("#addGeoNameID").keypress(function(e) {
+				var code = (e.keyCode ? e.keyCode : e.which);
+				if(code == 13) { //Enter keycode
+					return false;
+				}
+			});
+		});
+
+        function initializeGeography(){
+            $('#countryID').show();
+            $('#state').hide();
+            $('#province').hide();
+        }
+        function showCountry(){
+            $('#countryID').show();
+        }
+
+        function showProv(){
+			//alert('Actually executing showProv script');
+			var valCountry = $('#countryID option:selected').val();
+			var valCountryLabel = $('#countryID option:selected').text();
+		// show province list
+			if (valCountry == 'CA'){
+				$('#co').val(valCountry);
+				$('#colab').val(valCountryLabel);
+				$('#pr').val('');
+				$('#state').hide();
+				$('#province').show();
+			}
+			else if (valCountry == 'US'){
+				$('#co').val(valCountry);
+				$('#colab').val(valCountryLabel);
+				$('#pr').val('');
+				$('#province').hide();
+				$('#state').show();
+			}
+			else{
+				$('#province').hide();
+				$('#state').hide();
+				$('#co').val(valCountry);
+				$('#colab').val(valCountryLabel);
+				$('#pr').val('');
+			}
+			//alert(valCountryLabel);
+			$('#noConstraint').hide();
+			$('#countryConstraint').text(valCountryLabel);
+			$('#countryConstraint').show();
+			$('#provinceConstraint').hide();
+		}
+		function selectProv(){
+			var valProvince = $('#province option:selected').val();
+			var valProvinceLabel = $('#province option:selected').text();
+			$('#pr').val(valProvince);
+			$('#provinceConstraint').text(valProvinceLabel + ', ');
+			$('#provinceConstraint').show();
+		}
+		function selectState(){
+			var valProvince = $('#state option:selected').val();
+			var valProvinceLabel = $('#state option:selected').text();
+			$('#pr').val(valProvince);
+			$('#provinceConstraint').text(valProvinceLabel + ', ');
+			$('#provinceConstraint').show();
+		}
+        </script>
+    {% endif %}
+    {% if delete_dialog %}
+
+       <script src="{% static "js/jquery.cookie.js" %}" type="text/javascript"></script>
+       <script type="text/javascript">
+        $(function() {
+            var csrftoken = $.cookie('csrftoken');
+
+            $( "#edit_link" ).click(function() {
+                window.location = '/{{ site_identifier }}/contribute/{{ record.id }}/edit'
+            });
+            $( "#submit_link" ).click(function() {
+                window.location = '/{{ site_identifier }}/contribute/{{ record.id }}/confirm/'
+            });
+            $( "#delete_dialog" ).click(function() {
+                $( "#dialog-confirm" ).dialog( "open" );
+            });
+            $( "#dialog-confirm" ).dialog({
+                autoOpen: false,
+                resizable: false,
+                height:250,
+                modal: true,
+                buttons: {
+                    "{{ site_settings.ConLabelDeleteSubmit }}": function() {
+                        $( this ).dialog('option', 'close', function(event, ui) {window.location.href = "/{{ site_identifier }}/contribute/{{ record.id }}/delete/";});
+                        $( this ).dialog( "close" );
+                    },
+                    "{{ site_settings.ConLabelDeleteCancel }}": function() {
+                        $( this ).dialog( "close" );
+                    }
+                }
+            });
+        });
+       </script>
+    {% endif %}
+{% endblock %}
+

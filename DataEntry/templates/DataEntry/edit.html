@@ -1,0 +1,75 @@
+{% extends "DataEntry/header_block.html" %}
+
+{% load staticfiles %}
+{% block page_title %}
+   {{ record.title }}
+{% endblock %}
+
+
+{% block content %}
+   <h1>{{ record.title }}</h1>
+
+{{ site_settings.ConLabelReviewEdit }}<br/>
+<hr>
+<!-- Left floated content -->
+    {% if not full %}
+<form action="/{{ site_identifier }}/contribute/{{ record.id }}/update/" method="post" >
+        {% csrf_token %}
+    <div id="content-floatleft50">
+    <input type="submit" value="{{ site_settings.ConLabelSubmitEdit }}" />
+        <div class="fieldWrapper">
+            <label for="id_title">{{ site_settings.ConLabelTitle }}</label>
+            <div id="title">
+            <input id="id_title" type="text" name="title"  value="{% if record.title %}{{ record.title }}{% endif %}"  />
+            </div>
+        </div>
+        <div class="fieldWrapper">
+            <label for="id_description">{{ site_settings.ConLabelDescription }}</label>
+            <div id="description">
+                <textarea id="id_description" name="description" class="metatext">{% if record.description %}{{ record.description}}{% endif %}</textarea>
+            </div>
+
+            <label for="id_full_text">{{ site_settings.ConLabelStory }}</label>
+            <div id="full_text">
+                <textarea id="id_full_text" name="full_text" class="metatext">{% if record.full_text %}{{ record.full_text }}{% endif %}</textarea>
+            </div>
+
+        </div>
+        <div class="fieldWrapper">
+            <label for="id_location">{{ site_settings.ConLabelLocation }}</label>
+            {% include 'DataEntry/geography_update_block.html' %}
+        </div>
+        <div class="fieldWrapper">
+            <label>{{ site_settings.ConLabelContributor }}</label>
+            <div id="contributor">
+                <label for="id_contributor">{{ site_settings.ConLabelName }}</label><input id="id_contributor" type="text" name="contributor" value="{% if record.contributor %}{{ record.contributor }}{% endif %}" class="metatext"/><br/>
+                <label for="id_contributor_email">{{ site_settings.ConLabelEmail }}</label><input id="id_contributor_email" type="text" name="contributor_email" value="{% if record.contributor_email %}{{ record.contributor_email }}{% endif %}" class="metatext" />
+
+              <label for="id_contributor_name_permission">{{ site_settings.ComLabelNameOK }}</label><br/>
+              <input id="id_contributor_name_permission" name="contributor_name_permission" type="radio" value="True" {% if record.contributor_name_permission == True %}checked="checked" {% endif %}/> {{ site_settings.NBLabelYes }}
+              <input name="contributor_name_permission" type="radio" value="False" {% if record.contributor_name_permission == False%}checked="checked" {% endif %}/> {{ site_settings.NBLabelNo }}
+            </div>
+            <br/>
+            <label for="id_rights">{{ site_settings.DetLabelCreativeCommons }}</label><br/>
+            <img id="id_rights" src="{% static "img/by-nc-sa.png" %}" alt="BY-NC-SA">
+              <input type="hidden" name="rights" value="3">
+        </div>
+        <input type="submit" value="{{ site_settings.ConLabelSubmitEdit }}" />
+    </div>
+</form>
+    {% endif %}
+ <!-- balance of content -->
+    {% if full %}
+    <div class="content">
+    {% else %}
+    <div class="facetPanel">
+    {% endif %}
+        {#  TODO: link to the text file (10) in the detail display in a side panel #}
+        {% if recordobject %}
+            {% for file_object in recordobject %}
+                {% include 'DataEntry/details_right_file_objects.html' %}
+            {% endfor %}
+        {% endif %}
+            <div id="map_canvas" style="width: {{ google_map_canvas }}px; height: 300px"></div>
+    </div>
+{% endblock %}

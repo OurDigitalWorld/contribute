@@ -1,0 +1,17 @@
+{% extends "DataEntry/footer_block.html" %}
+{% block body_header %}
+    <div id="banner">
+    {% if site_settings.Banner %}
+		{% if site_settings.VitaPublicSitePath %}
+		<a href="{{site_settings.VitaPublicSitePath}}">
+		{%endif%}
+       <img src="{{ site_settings.Banner }}" width="100%" alt="{{ site_settings.SiteName }}" />
+		{% if site_settings.VitaPublicSitePath %}
+		</a>
+		{%endif%}
+    {% endif %}
+    </div>
+    <div id="branding">
+        <h1>{% block banner_title %}{% endblock %}</h1>
+    </div>
+{% endblock %}

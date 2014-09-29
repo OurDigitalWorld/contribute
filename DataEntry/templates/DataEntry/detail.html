@@ -1,0 +1,135 @@
+{% extends "DataEntry/header_block.html" %}
+
+{% load staticfiles %}
+{% block page_title %}
+   {{ record.title }}
+{% endblock %}
+
+
+{% block content %}
+
+<div id="finalSubmit">
+    {% if site_settings.SiteLanguage == 'fr' %}
+	Faire un examen final, ajouter ou modifier toute information manquante, ensuite  - {{ site_settings.ConLabelConfirm|upper }}
+	{%else%}
+	Do a final review, edit/add any missing information, then  - {{ site_settings.ConLabelConfirm|upper }}
+	{%endif%}
+</div>
+
+
+   <h1>{{ record.title }}</h1>
+
+    {% if message %}
+    <div class="alert">{{ message }}</div>
+    {% endif %}
+{{ site_settings.ConLabelReviewContribution }}<br/>
+    <button id="edit_link">{{ site_settings.ConLabelEdit }}</button>
+    <button id="delete_dialog">{{ site_settings.ConLabelDelete }}</button>
+	{% if record.contributor_email %}
+    <button id="submit_link">{{ site_settings.ConLabelConfirm }}</button>
+	{%endif%}
+<hr>
+
+
+    <div id="dialog-confirm" title="{{ site_settings.ConLabelDeleteTitle }}">
+        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>{{ site_settings.ConLabelDeleteText }}</p>
+    </div>
+
+<!-- Left floated content -->
+    {% if not full %}
+    <div id="content-floatleft50">
+    {% comment  %}
+    block to push warnings if preferred fields not entered
+    {% endcomment %}
+    {% if site_settings.SiteLanguage == 'fr' %}
+        {% if recordobject and not record.description  %}
+            <div class="alert">Descriptions are really useful<br/></div>
+        {% endif %}
+        {% if not recordobject and not record.full_text   %}
+            <div class="alert">We didn't get your story<br/></div>
+        {% endif %}
+        {% if not geodata  %}
+            <div class="alert">Is it possible to tell us where?<br/></div>
+        {% endif %}
+        {% if not record.contributor_email %}
+            <div class="alert">We won't make it public, but your email contact information is required.<br/></div>
+        {% endif %}
+        
+        
+    {% else %}
+        {% if recordobject and not record.description   %}
+            <div class="alert">Descriptions are really useful<br/></div>
+        {% endif %}
+        {% if not recordobject and not record.full_text   %}
+            <div class="alert">We didn't get your story<br/></div>
+        {% endif %}
+        {% if not geodata  %}
+            <div class="alert">Is it possible to tell us where?<br/></div>
+        {% endif %}
+        {% if not record.contributor_email %}
+            <div class="alert">We won't make it public, but your email contact information is required.<br/></div>
+        {% endif %}
+        
+    {% endif %}
+        <div class="fieldWrapper">
+            {% if record.description %}
+            <label for="description">{{ site_settings.ConLabelDescription }}</label>
+            <div id="description">{{ record.description|linebreaks }}</div>
+            {% endif %}
+            {% if record.full_text %}
+            <label for="full_text">{{ site_settings.ConLabelStory }}</label>
+            <div id="full_text">{{ record.full_text|linebreaks }}</div>
+            {% endif %}
+        </div>
+    {% if geodata %}
+        <div class="fieldWrapper">
+            <label for="location">{{ site_settings.ConLabelLocation }}</label>
+            <div id="location">
+                {% for geo in geodata %}
+                   {{ geo.name }}
+                   {% if geo.admin1text %}
+                       , {{ geo.admin1text }}
+                    {% endif %}
+                    , {{ geo.countrytext }}:
+                    {{ geo.latitude }}, {{ geo.longitude }}
+                    <br/>
+                {% endfor %}
+            </div>
+            <div id="geoLatLng" class="hide-text"> {% for geo in geodata %}{{ geo.latitude }}|{{ geo.longitude }}|{{ geo.name }};{% endfor %}</div>
+        </div>
+    {% endif %}
+        <div class="fieldWrapper">
+            <label for="contributor">{{ site_settings.ConLabelContributor }}</label>
+            <div id="contributor">
+              {{ record.contributor }}
+                <a href="mailto:{{ record.contributor_email }}">{{ record.contributor_email }}</a><br/>
+                <div class="alert">
+                {% if record.contributor_name_permission == True %}
+                    {{ site_settings.ConLabelNamePermissionYes }}
+                {% else %}
+                   {{ site_settings.ConLabelNamePermissionNo }}
+                {% endif %}
+                </div>
+            </div>
+            <br/>
+            <label for="id_rights">{{ site_settings.DetLabelCreativeCommons }}</label><br/>
+            <img id="id_rights" src="{% static "img/by-nc-sa.png" %}" alt="BY-NC-SA">
+        </div>
+    </div>
+    {% endif %}
+ <!-- balance of content -->
+    {% if full %}
+    <div class="content">
+    {% else %}
+    <div class="facetPanel">
+    {% endif %}
+        {% if recordobject %}
+            {% for file_object in recordobject %}
+                {% include 'DataEntry/details_right_file_objects.html' %}
+            {% endfor %}
+        {% endif %}
+        {% if geodata %}
+            <div id="map_canvas" style="width: {{ google_map_canvas }}px; height: 300px"></div>
+        {% endif %}
+    </div>
+{% endblock %}

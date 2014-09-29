@@ -1,0 +1,18 @@
+ {% if file_object.record_object_category_id == 1  %}
+    <div class="pictureBlock">
+        {% if not full %}
+        <a href="/{{ site_identifier }}/contribute/{{ record.id }}/{{ record.slug }}/full"><img src="/media/project/{{ file_object.file_name }}" /></a>
+        <a href="/{{ site_identifier }}/contribute/{{ record.id }}/{{ record.slug }}/full">{{ site_settings.ConLabelSeeFull }}</a><br/>
+        {% endif %}
+   </div>
+
+{% elif file_object.record_object_category_id == 2 %}
+    {% if full %}
+    <a href="/{{ site_identifier }}/contribute/{{ record.id }}/{{ record.slug }}">{{ site_settings.ConLabelSeeRegular }}</a><br/>
+    <a href="/{{ site_identifier }}/contribute/{{ record.id }}/{{ record.slug }}"><img src="/media/project/{{ file_object.file_name }}" /></a>
+    {% endif %}
+
+{% elif file_object.record_object_category_id == 10 %}
+    <a href="/media/project/{{ file_object.file_name }}">{{ site_settings.ConLabelSeeText }}</a>
+
+ {% endif %}
