@@ -43,18 +43,16 @@
             {% endif %}
             <br/>
         {% if geodata %}
-            <label for="location">{{ site_settings.ConLabelLocation }}</label>
-            <div id="location">
+            <dl id="geographyChecklist">
                 {% for geo in geodata %}
-                   {{ geo.name }}
+                   <dt>{{ geo.name }}
                    {% if geo.admin1text %}
                        , {{ geo.admin1text }}
                     {% endif %}
-                    , {{ geo.countrytext }}:
-                    {{ geo.latitude }}, {{ geo.longitude }}
-                    <br/>
+                    , {{ geo.countrytext }}</dt>
+                    <dd>{{ geo.latitude }}, {{ geo.longitude }}</dd>
                 {% endfor %}
-            </div>
+            </dl>
             <div id="geoLatLng" class="hide-text"> {% for geo in geodata %}{{ geo.latitude }}|{{ geo.longitude }}|{{ geo.name }};{% endfor %}</div>
             <div id="map_canvas" style="width: 400px; height: 300px"></div>
             <br/>
@@ -74,48 +72,14 @@
             <br/>
             <label for="id_rights">{{ site_settings.DetLabelCreativeCommons }}</label><br/>
             <img id="id_rights" src="{% static "img/by-nc-sa.png" %}" alt="BY-NC-SA">
+            <br/>
+             <div class="upload_terms">
+                {% include 'DataEntry/help/help_upload_terms.html' %}
+            </div>
         </div>
 
         <div class="step_help">
-            <div id="finalSubmit">
-                {% if site_settings.SiteLanguage == 'fr' %}
-                Faire un examen final, ajouter ou modifier toute information manquante, ensuite  - {{ site_settings.ConLabelConfirm|upper }}
-                {%else%}
-                Do a final review, edit/add any missing information, then  - {{ site_settings.ConLabelConfirm|upper }}
-                {%endif%}
-            </div>
-            {% comment  %}
-                 block to push warnings if preferred fields not entered
-            {% endcomment %}
-             {% if site_settings.SiteLanguage == 'fr' %}
-                {% if recordobject and not record.description  %}
-                    <div class="alert">Descriptions are really useful<br/></div>
-                {% endif %}
-                {% if not recordobject and not record.full_text   %}
-                    <div class="alert">We didn't get your story<br/></div>
-                {% endif %}
-                {% if not geodata  %}
-                    <div class="alert">Is it possible to tell us where?<br/></div>
-                {% endif %}
-                {% if not record.contributor_email %}
-                    <div class="alert">We won't make it public, but your email contact information is required.<br/></div>
-                {% endif %}
-            {% else %}
-                {% if recordobject and not record.description   %}
-                    <div class="alert">Descriptions are really useful<br/></div>
-                {% endif %}
-                {% if not recordobject and not record.full_text   %}
-                    <div class="alert">We didn't get your story<br/></div>
-                {% endif %}
-                {% if not geodata  %}
-                    <div class="alert">Is it possible to tell us where?<br/></div>
-                {% endif %}
-                {% if not record.contributor_email %}
-                    <div class="alert">We won't make it public, but your email contact information is required.<br/></div>
-                {% endif %}
-
-            {% endif %}
-
+            {% include 'DataEntry/help/help_review.html' %}
         </div>
 
     </fieldset>

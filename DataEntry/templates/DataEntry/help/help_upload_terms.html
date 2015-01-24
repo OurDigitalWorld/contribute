@@ -1,7 +1,6 @@
 {% load staticfiles %}
 
 {% if site_settings.SiteLanguage == 'en' %}
-        <input type="checkbox" id="terms" name="terms" /> <label for="terms">I agree to the <strong>Terms of Use</strong></label>.
             <input type="button" id="terms_show" value="Show Terms of Use" />
             <div id="terms_statement">
                 <p>By submitting my story and/or files to this collection, I agree that the material is licensed for use according to the  Attribution-NonCommercial-ShareAlike Creative Commons license. <img src="{% static "img/by-nc-sa.png" %}" alt="BY-NC-SA"> (<a href="http://creativecommons.org/licenses/?lang=en">What is this?</a>)</p>
@@ -27,7 +26,6 @@
         </div>
 
         {% elif site_settings.SiteLanguage == 'fr' %}
-        <input type="checkbox" id="terms" name="terms" /> Je suis d'accord à ces <strong>Conditions d'utilisation</strong>.
             <input type="button" id="terms_show" value="Afficher Conditions d'utilisation" />
             <div id="terms_statement">
                 <p>En soumettant mon histoire et / ou les fichiers à cette collection, je suis d'accord que la matière est autorisé à utiliser selon cette licence Creative Commons Attribution-Pas d’Utilisation Commerciale-Partage dans les Mêmes Conditions. <img src="{% static "img/by-nc-sa.png" %}" alt="BY-NC-SA"> (<a href="http://creativecommons.org/licenses/?lang=fr">Qu'est-ce que c'est?</a>)</p>

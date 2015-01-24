@@ -34,15 +34,17 @@
             <div class="fieldContent">
                 <label for="id_description">{{ site_settings.ConLabelDescription }}</label>
                 <div id="description">
-                    <textarea id="id_description" name="description" class="metatext">{% if record.description %}{{ record.description}}{% endif %}</textarea>
+                    <textarea id="id_description" name="description" class="textcommon">{% if record.description %}{{ record.description}}{% endif %}</textarea>
                 </div>
 
                 <label for="id_full_text">{{ site_settings.ConLabelStory }}</label>
                 <div id="full_text">
-                    <textarea id="id_full_text" name="full_text" class="metatext">{% if record.full_text %}{{ record.full_text }}{% endif %}</textarea>
+                    <textarea id="id_full_text" name="full_text" class="textcommon">{% if record.full_text %}{{ record.full_text }}{% endif %}</textarea>
                 </div>
             </div>
-             <div class="step_help"></div>
+             <div class="step_help">
+            {% include 'DataEntry/help/help_text_blocks.html' %}
+             </div>
         </fieldset>
 
         <fieldset id="edit2">
@@ -51,7 +53,9 @@
                 {% include 'DataEntry/geography_update_block.html' %}
                 <div id="map_canvas" style="width: 400px; height: 300px"></div>
             </div>
-             <div class="step_help"></div>
+             <div class="step_help">
+                {% include 'DataEntry/help/help_geography.html' %}
+             </div>
         </fieldset>
 
         <fieldset id="edit3">
@@ -67,20 +71,31 @@
                     <input id="id_contributor_name_permission_no" name="contributor_name_permission" type="radio" value="False" {% if record.contributor_name_permission == False%}checked="checked" {% endif %}/> <label for="id_contributor_name_permission_no">{{ site_settings.NBLabelNo }}</label>
                 </div>
             </div>
-             <div class="step_help"></div>
+            <div class="step_help">
+                {% include 'DataEntry/help/help_contributor.html' %}
+            </div>
         </fieldset>
 
         <fieldset id="edit4">
             <div class="fieldContent">
                 <label for="id_rights">{{ site_settings.DetLabelCreativeCommons }}</label><br/>
                 <img id="id_rights" src="{% static "img/by-nc-sa.png" %}" alt="BY-NC-SA">
+                <br/>
+                <br/>
                   <input type="hidden" name="rights" value="3" />
+                 <div class="upload_terms">
+                    {% include 'DataEntry/help/help_upload_terms.html' %}
+                </div>
             </div>
-            <div class="step_help"></div>
+             <div class="step_help">
+                {% include 'DataEntry/help/help_rights.html' %}
+             </div>
         </fieldset>
         <div class="update">
             <input type="submit" value="{{ site_settings.ConLabelSubmitEdit }}" />
         </div>
     </fieldset>
 </form>
+
+
 {% endblock %}

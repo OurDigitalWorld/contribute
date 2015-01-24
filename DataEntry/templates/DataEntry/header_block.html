@@ -204,5 +204,57 @@
         });
        </script>
     {% endif %}
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+            if(document.getElementById('#id_full_text') != null){
+                var txt = $('#id_full_text'),
+                        hiddenDiv = $(document.createElement('div')),
+                        content = null;
+                txt.addClass('txtstuff');
+                hiddenDiv.addClass('hiddendiv textcommon');
+                $('body').append(hiddenDiv);
+                content = $('#id_full_text').val();
+                content = content.replace(/\n/g, '<br>');
+                hiddenDiv.html(content + '<br class="lbr">');
+                $('#id_full_text').css('height', hiddenDiv.height());
+                txt.on('keyup', function () {
+                    content = $(this).val();
+                    content = content.replace(/\n/g, '<br>');
+                    hiddenDiv.html(content + '<br class="lbr">');
+                    $(this).css('height', hiddenDiv.height());
+                });
+            };
+
+            if(document.getElementById('#id_description') != null) {
+                var txt2 = $('#id_description'),
+                        hiddenDiv2 = $(document.createElement('div')),
+                        content2 = null;
+                txt2.addClass('txtstuff');
+                hiddenDiv2.addClass('hiddendiv textcommon');
+                $('body').append(hiddenDiv2);
+                content2 = $('#id_description').val();
+                content2 = content2.replace(/\n/g, '<br>');
+                hiddenDiv2.html(content2 + '<br class="lbr">');
+                $('#id_description').css('height', hiddenDiv2.height());
+                txt2.on('keyup', function () {
+                    content2 = $(this).val();
+                    content2 = content2.replace(/\n/g, '<br>');
+                    hiddenDiv2.html(content2 + '<br class="lbr">');
+                    $(this).css('height', hiddenDiv2.height());
+                });
+            };
+
+           $('#terms_statement').hide();
+           $('#terms_show').click(function () {
+               $('#terms_show').hide();
+               $('#terms_statement').show();
+           });
+           $('#terms_hide').click(function () {
+               $('#terms_show').show();
+               $('#terms_statement').hide();
+           });
+		});
+    </script>
 {% endblock %}
 

@@ -5,6 +5,6 @@
     {% else %}
         ,
     {% endif %}
-{"id":"{{ result.id }}","term":"{{ result.name }}, {{ result.admin1text }}, {{ result.countrytext }} ({{ result.featuretext_en }}: {{ result.latitude }}, {{ result.longitude }})", "latitude":"{{ result.latitude }}", "longitude":"{{ result.longitude }}", "name":"{{ result.name }}"}
+{"id":"{{ result.id }}","term":"{{ result.name }}, {{ result.admin1text }}, {{ result.countrytext }}<br/> ({{ result.featuretext_en }}: {{ result.latitude }}, {{ result.longitude }})", "latitude":"{{ result.latitude }}", "longitude":"{{ result.longitude }}", "name":"{{ result.name }}"}
 {% endfor %}
 ]}

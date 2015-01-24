@@ -8,7 +8,7 @@
                        {% if geo.admin1text %}
                            , {{ geo.admin1text }}
                         {% endif %}
-                        {{ geo.countrytext }}:
+                        {{ geo.countrytext }}<br/>
                         {{ geo.latitude }}, {{ geo.longitude }}
                         </dt>
                     {% endfor %}
@@ -24,7 +24,7 @@
                     <div id="provinceConstraint" class="inline">{% if constraint_province %}{{ constraint_province }}, {% endif %}</div>
                     <div id="countryConstraint" class="inline">{{ constraint_country_label }}</div>
                 </div>
-                {% include 'DataEntry/country.html' %}
+                {% include 'DataEntry/country.html' %}<br/>
                 {% include 'DataEntry/provinceState.html' %}  
                 <div class="ui-widget">
                     <label for="addGeoNameID">{{ site_settings.ConLabelLocationAdd }}</label>

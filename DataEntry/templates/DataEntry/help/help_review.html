@@ -1,0 +1,41 @@
+{% load staticfiles %}
+
+
+<div id="finalSubmit">
+	{% if site_settings.SiteLanguage == 'fr' %}
+		Faire un examen final, ajouter ou modifier toute information manquante, ensuite  - {{ site_settings.ConLabelConfirm|upper }}
+	{%else%}
+		<p>Do a final review, edit/add any missing information. Finally, click the {{ site_settings.ConLabelConfirm|upper }} below to complete your contribution.</p>
+	{%endif%}
+</div>
+{% comment  %}
+	 block to push warnings if preferred fields not entered
+{% endcomment %}
+{% if site_settings.SiteLanguage == 'fr' %}
+	{% if recordobject and not record.description  %}
+		<div class="alert">Descriptions are really useful<br/></div>
+	{% endif %}
+	{% if not recordobject and not record.full_text   %}
+		<div class="alert">We didn't get your story<br/></div>
+	{% endif %}
+	{% if not geodata  %}
+		<div class="alert">Is it possible to tell us where?<br/></div>
+	{% endif %}
+	{% if not record.contributor_email %}
+		<div class="alert">We won't make it public, but your email contact information is required.<br/></div>
+	{% endif %}
+{% else %}
+	{% if recordobject and not record.description   %}
+		<div class="alert">Descriptions are really useful<br/></div>
+	{% endif %}
+	{% if not recordobject and not record.full_text   %}
+		<div class="alert">We didn't get your story<br/></div>
+	{% endif %}
+	{% if not geodata  %}
+		<div class="alert">Is it possible to tell us where?<br/></div>
+	{% endif %}
+	{% if not record.contributor_email %}
+		<div class="alert">We won't make it public, but your email contact information is required.<br/></div>
+	{% endif %}
+
+{% endif %}

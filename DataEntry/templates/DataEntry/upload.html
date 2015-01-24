@@ -32,6 +32,11 @@
         </div>
 
          <div class="upload_terms">
+            {% if site_settings.SiteLanguage == 'en' %}
+                <input type="checkbox" id="terms" name="terms" /> <label for="terms">I agree to the <strong>Terms of Use</strong></label>.
+        {% elif site_settings.SiteLanguage == 'fr' %}
+                <input type="checkbox" id="terms" name="terms" /> Je suis d'accord à ces <strong>Conditions d'utilisation</strong>.
+             {% endif %}
             {% include 'DataEntry/help/help_upload_terms.html' %}
         </div>
         <div id="intro_choice">
@@ -72,7 +77,7 @@
                     <br/>
                 </div>
            {% endifequal %}
-                <label for="id_title">{{ site_settings.ConLabelTitle }}</label>
+                <label for="id_title">{{ site_settings.ConLabelTitle }}</label><br/>
                 <input class="title" id="id_title" maxlength="256" name="title" type="text" />
          </div>
          <div class="step_help">
@@ -84,14 +89,14 @@
         <div class="fieldContent">
             <div id="step2-description">
             {% ifequal site_settings.ConIncludeImage '1'%}
-             <label for="id_description">{{ site_settings.ConLabelDescription }}</label>
-              <textarea class="description" id="id_description" name="description" rows="10"></textarea>
+             <label for="id_description">{{ site_settings.ConLabelDescription }}</label><br/>
+              <textarea class="textcommon" id="id_description" name="description"></textarea>
             {% endifequal %}
             </div>
             <div id="step2-fulltext">
             {% ifequal site_settings.ConIncludeStory '1'%}
-             <label for="id_full_text">{{ site_settings.ConLabelStory }}</label>
-              <textarea class="full_text" id="id_full_text" name="full_text" rows="10"></textarea>
+             <label for="id_full_text">{{ site_settings.ConLabelStory }}</label><br/>
+              <textarea  class="textcommon" id="id_full_text" name="full_text"></textarea>
             {% endifequal %}
             </div>
          </div>
@@ -115,10 +120,10 @@
 
       <fieldset id="step4">
           <div class="fieldContent">
-           <label for="id_contributor">{{ site_settings.ConLabelContributor }}</label>
+           <label for="id_contributor">{{ site_settings.ConLabelContributor }}</label><br/>
           <input class="contributor" id="id_contributor" maxlength="256" name="contributor" type="text" />
           <br/>
-          <label for="id_contributor_email">{{ site_settings.ConLabelEmail }}</label>
+          <label for="id_contributor_email">{{ site_settings.ConLabelEmail }}</label><br/>
           <input id="id_contributor_email" name="contributor_email" type="email" />
             <br/>
           <label for="id_contributor_name_permission">{{ site_settings.ComLabelNameOK }}</label>
@@ -135,12 +140,17 @@
      <fieldset id="step5">
       <div class="fieldContent">
           <p class="common-buttons-block" >
-                <input type="submit" class="save" value="{{ site_settings.ConLabelButtonUpload }}" />
+                <input id="upload_submit" type="submit" class="save" value="{{ site_settings.ConLabelButtonUpload }}" />
                 <input type="reset" class="save" value="{{ site_settings.ConLabelButtonClear }}" />
           </p>
        </div>
          <div class="step_help">
+			<div id="step5help">
             {% include 'DataEntry/help/help_submit.html' %}
+			</div>
+			<div id="step5warning">
+            {% include 'DataEntry/help/help_submit_warning.html' %}
+			</div>
          </div>
      </fieldset>
     </div>
@@ -151,16 +161,7 @@
 
 <script type="text/javascript">
        $( document ).ready(function() {
-            $('#form_body').hide();
-            $('#terms_statement').hide();
-            $('#terms_show').click(  function() {
-				$('#terms_show').hide();
-                $('#terms_statement').show();
-            });
-            $('#terms_hide').click(  function() {
-				$('#terms_show').show();
-                $('#terms_statement').hide();
-            });
+           $('#form_body').hide();
            $('#step1').hide();
 
            {% if site_settings.ConIncludeImage == '1' and site_settings.ConIncludeStory == '1' %}
@@ -170,7 +171,7 @@
 			if (checked){
 				$('#intro_choice').show();
 			}else{
-				$('#intro_choice').hide();
+                window.location.reload();
 			}
 		   });
 
@@ -183,6 +184,9 @@
                $('#step2-fulltext').hide();
                gMapInitialize();
                $('#id_image_upload_block').show();
+               $('#upload_submit').hide();
+               $('#step5help').hide();
+               $('#step5warning').show();
             });
 
            $('#id_send_story').on( "click", function( event ) {
@@ -196,13 +200,18 @@
 
                $('#id_image_upload_block').hide();
             });
+           $('#id_image_file').on( "click", function( event ) {
+               $('#upload_submit').show();
+               $('#step5warning').hide();
+               $('#step5help').show();
+            });
 			{%else%}
 		  $('#terms').change(  function() {
 			var checked = ($(this).is(':checked'));
 			if (checked){
 				$('#step1').show();
 			}else{
-				$('#step1').hide();
+                window.location.reload();
 			}
 		   });
 
