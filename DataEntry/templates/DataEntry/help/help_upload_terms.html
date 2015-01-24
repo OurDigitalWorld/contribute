@@ -1,0 +1,55 @@
+{% load staticfiles %}
+
+{% if site_settings.SiteLanguage == 'en' %}
+        <input type="checkbox" id="terms" name="terms" /> <label for="terms">I agree to the <strong>Terms of Use</strong></label>.
+            <input type="button" id="terms_show" value="Show Terms of Use" />
+            <div id="terms_statement">
+                <p>By submitting my story and/or files to this collection, I agree that the material is licensed for use according to the  Attribution-NonCommercial-ShareAlike Creative Commons license. <img src="{% static "img/by-nc-sa.png" %}" alt="BY-NC-SA"> (<a href="http://creativecommons.org/licenses/?lang=en">What is this?</a>)</p>
+
+        <p>In doing so, you agree that:</p>
+        <ul>
+            <li>the uploaded material is not copyrighted, or </li>
+            <li>you own the copyright, or</li>
+            <li>you have permission to share the content.</li>
+        </ul>
+
+        <p>You allow others the right to:</p>
+        <ul>
+            <li>remix, tweak, and build upon your work non-commercially, as long as they credit you and license their new creations under the identical terms. </li>
+        </ul>
+
+        <p>You allow the site manager the right to:</p>
+        <ul>
+            <li> make private any item deemed offensive or that otherwise contravenes these terms.</li>
+        </ul>
+
+        <input type="button" id="terms_hide" value="Hide Terms of Use" />
+        </div>
+
+        {% elif site_settings.SiteLanguage == 'fr' %}
+        <input type="checkbox" id="terms" name="terms" /> Je suis d'accord à ces <strong>Conditions d'utilisation</strong>.
+            <input type="button" id="terms_show" value="Afficher Conditions d'utilisation" />
+            <div id="terms_statement">
+                <p>En soumettant mon histoire et / ou les fichiers à cette collection, je suis d'accord que la matière est autorisé à utiliser selon cette licence Creative Commons Attribution-Pas d’Utilisation Commerciale-Partage dans les Mêmes Conditions. <img src="{% static "img/by-nc-sa.png" %}" alt="BY-NC-SA"> (<a href="http://creativecommons.org/licenses/?lang=fr">Qu'est-ce que c'est?</a>)</p>
+
+        <p>Ce faisant, vous convenez que:</p>
+        <ul>
+            <li>le matériel téléchargé n'est pas les droits d'auteur, ou </li>
+            <li>vous êtes le propriétaire du droit d'auteur, ou</li>
+            <li>vous avez la permission de partager ce contenu.</li>
+        </ul>
+
+        <p>Cette licence permet aux autres:</p>
+        <ul>
+            <li>de remixer, arranger, et adapter votre œuvre à des fins non commerciales tant qu’on vous crédite en citant votre nom et que les nouvelles œuvres sont diffusées selon les mêmes conditions.</li>
+        </ul>
+
+        <p>Vous autorisez le gestionnaire du site le droit de:</p>
+        <ul>
+            <li> faire privé tout article jugé offensant ou qui contrevient autrement ces termes.</li>
+        </ul>
+
+
+        <input type="button" id="terms_hide" value="Masquer Conditions d'utilisation" />
+        </div>
+        {% endif %}

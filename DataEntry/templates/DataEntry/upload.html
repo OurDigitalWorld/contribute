@@ -13,188 +13,145 @@
 
 
 {% block content %}
-    <div class="upload_confirm">
-    {% if vita_url and site_settings.ConPublicDisplay == '1'%}
-        {% if vita_thumb_url %}
-          <a href="{{ vita_url }}" ><img src="{{ vita_thumb_url }}" alt="contribution"/></a>
+<div id="intro">
+    <div id="intro_twothirds">
+        <div class="upload_confirm">
+        {% if vita_url and site_settings.ConPublicDisplay == '1'%}
+            {% if vita_thumb_url %}
+              <a href="{{ vita_url }}" ><img src="{{ vita_thumb_url }}" alt="contribution"/></a>
+            {% endif %}
+            {{ site_settings.ConPublicMessage1|safe }} <a href="{{ vita_url }}" >{{ vita_url }}</a>
+        {% elif vita_thumb_url %}
+              <img src="{{ vita_thumb_url }}" alt="contribution"/>
         {% endif %}
-        {{ site_settings.ConPublicMessage1|safe }} <a href="{{ vita_url }}" >{{ vita_url }}</a>
-    {% elif vita_thumb_url %}
-          <img src="{{ vita_thumb_url }}" alt="contribution"/>
-    {% endif %}
-        {{ message }}
-    </div>
+            {{ message }}
+        </div>
 
-    <div class="upload_intro">
-    {{ site_settings.ConLabelIntro|safe }}
-    </div>
+        <div class="upload_intro">
+        {{ site_settings.ConLabelIntro|safe }}
+        </div>
 
-     <div class="upload_terms">
-    {% if site_settings.SiteLanguage == 'en' %}
-    <input type="checkbox" id="terms" name="terms" /> I agree to the <strong>Terms of Use</strong>.  
-        <input type="button" id="terms_show" value="Show Terms of Use" />
-        <div id="terms_statement">
-            <p>By submitting my story and/or files to this collection, I agree that the material is licensed for use according to the  Attribution-NonCommercial-ShareAlike Creative Commons license. <img src="{% static "img/by-nc-sa.png" %}" alt="BY-NC-SA"> (<a href="http://creativecommons.org/licenses/?lang=en">What is this?</a>)</p>
-
-    <p>In doing so, you agree that:</p>
-    <ul>
-        <li>the uploaded material is not copyrighted, or </li>
-        <li>you own the copyright, or</li>
-        <li>you have permission to share the content.</li>
-    </ul>
-
-    <p>You allow others the right to:</p>
-	<ul>
-        <li>remix, tweak, and build upon your work non-commercially, as long as they credit you and license their new creations under the identical terms. </li>
-    </ul>
-
-    <p>You allow the site manager the right to:</p>
-	<ul>
-        <li> make private any item deemed offensive or that otherwise contravenes these terms.</li>
-    </ul>
-
-	<input type="button" id="terms_hide" value="Hide Terms of Use" />
-    </div>
-
-    {% elif site_settings.SiteLanguage == 'fr' %}
-    <input type="checkbox" id="terms" name="terms" /> Je suis d'accord à ces <strong>Conditions d'utilisation</strong>. 
-        <input type="button" id="terms_show" value="Afficher Conditions d'utilisation" />
-        <div id="terms_statement">
-            <p>En soumettant mon histoire et / ou les fichiers à cette collection, je suis d'accord que la matière est autorisé à utiliser selon cette licence Creative Commons Attribution-Pas d’Utilisation Commerciale-Partage dans les Mêmes Conditions. <img src="{% static "img/by-nc-sa.png" %}" alt="BY-NC-SA"> (<a href="http://creativecommons.org/licenses/?lang=fr">Qu'est-ce que c'est?</a>)</p>
-
-    <p>Ce faisant, vous convenez que:</p>
-    <ul>
-        <li>le matériel téléchargé n'est pas les droits d'auteur, ou </li>
-        <li>vous êtes le propriétaire du droit d'auteur, ou</li>
-        <li>vous avez la permission de partager ce contenu.</li>
-    </ul>
-
-    <p>Cette licence permet aux autres:</p>
-	<ul>
-        <li>de remixer, arranger, et adapter votre œuvre à des fins non commerciales tant qu’on vous crédite en citant votre nom et que les nouvelles œuvres sont diffusées selon les mêmes conditions.</li>
-    </ul>
-
-    <p>Vous autorisez le gestionnaire du site le droit de:</p>
-	<ul>
-        <li> faire privé tout article jugé offensant ou qui contrevient autrement ces termes.</li>
-    </ul>
-
-
-	<input type="button" id="terms_hide" value="Masquer Conditions d'utilisation" />
-    </div>
-    {% endif %}
-    </div>
-	<div id="intro_choice">
-    {% if site_settings.ConIncludeImage == '1' and site_settings.ConIncludeStory == '1'%}
-        {{ site_settings.ConLabelIntroChoice }}
-        {% if site_settings.ConIncludeImage == '1' %}
-            <input type = "button" id="id_send_file" value="{{ site_settings.ConLabelSendFile }}" />
+         <div class="upload_terms">
+            {% include 'DataEntry/help/help_upload_terms.html' %}
+        </div>
+        <div id="intro_choice">
+        {% if site_settings.ConIncludeImage == '1' and site_settings.ConIncludeStory == '1'%}
+            {% if site_settings.ConIncludeImage == '1' %}
+                <input type = "button" id="id_send_file" value="{{ site_settings.ConLabelSendFile }}" />
+            {% endif %}
+            {% if site_settings.ConIncludeStory == '1' %}
+                <input type = "button" id="id_send_story" value="{{ site_settings.ConLabelTellStory }}" />
+            {% endif %}
         {% endif %}
-        {% if site_settings.ConIncludeStory == '1' %}
-            <input type = "button" id="id_send_story" value="{{ site_settings.ConLabelTellStory }}" />
-        {% endif %}
-    {% endif %}
-	</div>
+        </div>
+    </div>
+
+    <div id="intro_onethird">
+
+    </div>
+</div>
+
+<div class="clear"></div>
+
+<div id="contribute_form">
    <form action="{{ upload_action }}" enctype="multipart/form-data" method="post">
-        {% csrf_token %}
-        <div>
-          <fieldset class="module aligned ">
+    {% csrf_token %}
+      <fieldset class="module">
 
 
-          <fieldset id="step1">
-             <div class="fieldWrapper">
-                <div id="step-label1">{{ site_settings.ConLabelStep1 }}</div>
-                  <div id="subject_1">
-                      <label for="subj">{{ site_settings.ConTuring }}</label>
-                      <input type="text" name="subj" id="subj" />
-                  </div>
-                {% ifequal site_settings.ConIncludeImage '1'%}
-                    <div id="id_image_upload_block">
-                        <label for="id_image_file">{{ site_settings.ConLabelPickFile }}</label>
-                        <input id="id_image_file" name="image_file" type="file" />
-                        <br/>
-                    </div>
-               {% endifequal %}
-                    <label for="id_title">{{ site_settings.ConLabelTitle }}</label>
-                    <input class="title" id="id_title" maxlength="256" name="title" size="80" type="text" />
-                 <br/>
-                  <input type="button" id="continue1" value="{{ site_settings.ConLabelOnStep2 }}" />
-             </div>
-          </fieldset>
-          <fieldset id="step2">
-            <div class="fieldWrapper">
-                <div id="step-label2">{{ site_settings.ConLabelStep2 }}</div>
-
-                <div id="step2-description">
-                {% ifequal site_settings.ConIncludeImage '1'%}
-                 <label for="id_description">{{ site_settings.ConLabelDescription }}</label>
-                  <textarea class="description" cols="70" id="id_description" name="description" rows="10"></textarea>
-                {% endifequal %}
+      <fieldset id="step1">
+         <div class="fieldContent">
+              <div id="subject_1">
+                  <label for="subj">{{ site_settings.ConTuring }}</label>
+                  <input type="text" name="subj" id="subj" />
+              </div>
+            {% ifequal site_settings.ConIncludeImage '1'%}
+                <div id="id_image_upload_block">
+                    <label for="id_image_file">{{ site_settings.ConLabelPickFile }}</label>
+                    <input id="id_image_file" name="image_file" type="file" />
+                    <br/>
                 </div>
-                <div id="step2-fulltext">
-                {% ifequal site_settings.ConIncludeStory '1'%}
-                 <label for="id_full_text">{{ site_settings.ConLabelStory }}</label>
-                  <textarea class="full_text" cols="70" id="id_full_text" name="full_text" rows="10"></textarea>
-                {% endifequal %}
-                </div>
-                <br/>
-              <input type="button" id="continue2" value="{{ site_settings.ConLabelOnStep3 }}" />
-             </div>
-          </fieldset>
+           {% endifequal %}
+                <label for="id_title">{{ site_settings.ConLabelTitle }}</label>
+                <input class="title" id="id_title" maxlength="256" name="title" type="text" />
+         </div>
+         <div class="step_help">
+            {% include 'DataEntry/help/help_file_type.html' %}
+         </div>
+      </fieldset>
+      <div id="form_body">
+      <fieldset id="step2">
+        <div class="fieldContent">
+            <div id="step2-description">
+            {% ifequal site_settings.ConIncludeImage '1'%}
+             <label for="id_description">{{ site_settings.ConLabelDescription }}</label>
+              <textarea class="description" id="id_description" name="description" rows="10"></textarea>
+            {% endifequal %}
+            </div>
+            <div id="step2-fulltext">
+            {% ifequal site_settings.ConIncludeStory '1'%}
+             <label for="id_full_text">{{ site_settings.ConLabelStory }}</label>
+              <textarea class="full_text" id="id_full_text" name="full_text" rows="10"></textarea>
+            {% endifequal %}
+            </div>
+         </div>
+         <div class="step_help">
+            {% include 'DataEntry/help/help_text_blocks.html' %}
+         </div>
+      </fieldset>
 
-          <fieldset id="step3">
-              <div class="fieldWrapper">
-                <div id="step-label3">{{ site_settings.ConLabelStep3 }}</div>
-                <div class="formField">
+      <fieldset id="step3">
+          <div class="fieldContent">
+              <div class="formField">
                     {% include 'DataEntry/geography_update_block.html' %}
               </div>
 
-              <div id="map_canvas" style=" width: 400px; height: 10px"> </div>
-              <input type="button" id="return3" value="{{ site_settings.ConLabelBackStep2 }}" />
-              <input type="button" id="continue3" value="{{ site_settings.ConLabelOnStep4 }}" />
-              </div>
-           </fieldset>
+              <div id="map_canvas" style=" width: 400px; height: 400px"> </div>
+          </div>
+         <div class="step_help">
+            {% include 'DataEntry/help/help_geography.html' %}
+         </div>
+       </fieldset>
 
-          <fieldset id="step4">
-              <div class="fieldWrapper">
-            <div id="step-label4">{{ site_settings.ConLabelStep4 }}</div>
-               <label for="id_contributor">{{ site_settings.ConLabelContributor }}</label>
-              <input class="contributor" id="id_contributor" maxlength="256" name="contributor" size="80" type="text" />
+      <fieldset id="step4">
+          <div class="fieldContent">
+           <label for="id_contributor">{{ site_settings.ConLabelContributor }}</label>
+          <input class="contributor" id="id_contributor" maxlength="256" name="contributor" type="text" />
+          <br/>
+          <label for="id_contributor_email">{{ site_settings.ConLabelEmail }}</label>
+          <input id="id_contributor_email" name="contributor_email" type="email" />
+            <br/>
+          <label for="id_contributor_name_permission">{{ site_settings.ComLabelNameOK }}</label>
               <br/>
-              <label for="id_contributor_email">{{ site_settings.ConLabelEmail }}</label>
-              <input id="id_contributor_email" name="contributor_email" size="80" type="email" />
-                <br/>
-              <label for="id_contributor_name_permission">{{ site_settings.ComLabelNameOK }}</label><br/>
-              <input id="id_contributor_name_permission" name="contributor_name_permission" type="radio" value="True" {% if record.contributor_name_permission == True %}checked="checked" {% endif %}/> {{ site_settings.NBLabelYes }}
-              <input name="contributor_name_permission" type="radio" value="False" {% if record.contributor_name_permission == False%}checked="checked" {% endif %}/>{{ site_settings.NBLabelNo }}
-              <br/>
-
-              <input type="hidden" name="rights" value="3">
-              <input type="button" id="return4" value="{{ site_settings.ConLabelBackStep3 }}" />
-              <input type="button" id="continue4" value="{{ site_settings.ConLabelSubmitReady }}" />
-              </div>
-             </fieldset>
-        {# TODO: display geographic seletion on page for user #}
-        {# TODO: fix location of pick list in autocomplete #}
-         <fieldset id="step5">
-          <div class="fieldWrapper">
-              <div id="step-label5">{{ site_settings.ConLabelStep5 }}</div>
-
-
-              <p class="common-buttons-block" >
-                    <input type="button" id="return5" value="{{ site_settings.ConLabelBackStep4 }}" />
-                    <input type="submit" class="save" value="{{ site_settings.ConLabelButtonUpload }}" />
-                    <input type="reset" class="save" value="{{ site_settings.ConLabelButtonClear }}" />
-              </p>
-             </div>
+          <input id="id_contributor_name_permission" name="contributor_name_permission" type="radio" value="True" {% if record.contributor_name_permission == True %}checked="checked" {% endif %}/> {{ site_settings.NBLabelYes }}
+          <input name="contributor_name_permission" type="radio" value="False" {% if record.contributor_name_permission == False%}checked="checked" {% endif %}/> {{ site_settings.NBLabelNo }}
+          </div>
+         <div class="step_help">
+            {% include 'DataEntry/help/help_contributor.html' %}
+         </div>
          </fieldset>
+    {# TODO: display geographic seletion on page for user #}
+    {# TODO: fix location of pick list in autocomplete #}
+     <fieldset id="step5">
+      <div class="fieldContent">
+          <p class="common-buttons-block" >
+                <input type="submit" class="save" value="{{ site_settings.ConLabelButtonUpload }}" />
+                <input type="reset" class="save" value="{{ site_settings.ConLabelButtonClear }}" />
+          </p>
+       </div>
+         <div class="step_help">
+            {% include 'DataEntry/help/help_submit.html' %}
+         </div>
+     </fieldset>
+    </div>
 
-          </fieldset>
-        </div>
+      </fieldset>
     </form>
+</div>
 
 <script type="text/javascript">
        $( document ).ready(function() {
+            $('#form_body').hide();
             $('#terms_statement').hide();
             $('#terms_show').click(  function() {
 				$('#terms_show').hide();
@@ -222,9 +179,10 @@
                $('.upload_confirm').hide();
 			   $('#intro_choice').html('<h1>{{site_settings.ConLabelSendFile }}</h1>')
                $('#step1').show();
-               $('#id_image_upload_block').show();
-               $('#step2-description').show();
+               $('#form_body').show();
                $('#step2-fulltext').hide();
+               gMapInitialize();
+               $('#id_image_upload_block').show();
             });
 
            $('#id_send_story').on( "click", function( event ) {
@@ -232,9 +190,11 @@
                $('.upload_confirm').hide();
 			   $('#intro_choice').html('<h1>{{site_settings.ConLabelTellStory }}</h1>')
                $('#step1').show();
-               $('#id_image_upload_block').hide();
+               $('#form_body').show();
                $('#step2-description').hide();
-               $('#step2-fulltext').show();
+               gMapInitialize();
+
+               $('#id_image_upload_block').hide();
             });
 			{%else%}
 		  $('#terms').change(  function() {
@@ -248,41 +208,6 @@
 
            {% endif %}
 
-           $('#step2').hide();
-           $('#step3').hide();
-           $('#step4').hide();
-           $('#step5').hide();
-
-           $('#continue1').on( "click", function( event ) {
-               $('.upload_confirm').hide();
-                $('#step-label1').hide()
-                $('#continue1').hide();
-                $('#step2').show();
-            });
-           $('#continue2').on( "click", function( event ) {
-                $('#step2').hide();
-                $('#step3').show();
-            });
-           $('#continue3').on( "click", function( event ) {
-                $('#step3').hide();
-                $('#step4').show();
-            });
-           $('#continue4').on( "click", function( event ) {
-                $('#step4').hide();
-                $('#step5').show();
-            });
-           $('#return3').on( "click", function( event ) {
-                $('#step2').show();
-                $('#step3').hide();
-            });
-           $('#return4').on( "click", function( event ) {
-                $('#step3').show();
-                $('#step4').hide();
-            });
-           $('#return5').on( "click", function( event ) {
-                $('#step4').show();
-                $('#step5').hide();
-            });
         });
     </script>
 {% endblock %}

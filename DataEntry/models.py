@@ -25,7 +25,7 @@ class Record(models.Model):
     rights = models.ForeignKey( Right, null=True, blank=True)
     date_added = models.DateTimeField(auto_now_add = True)
     date_modified = models.DateTimeField(auto_now = True)
-    image_file = models.FileField(upload_to='project/', null=True, blank=True)
+    image_file = models.FileField(max_length=256, upload_to='project/', null=True, blank=True)
     full_text = models.TextField(null=True, blank=True)
     slug = models.SlugField( max_length=60, blank=True)
 

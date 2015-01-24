@@ -9,7 +9,9 @@
     <link rel="stylesheet" type="text/css" href="{% static "css/forms.css" %}" />
     <link rel="stylesheet" type="text/css" href="{% static "css/changelists.css" %}" />
     <link rel="stylesheet" type="text/css" href="{% static "css/normalize.css" %}" />
+    <link rel="stylesheet" type="text/css" href="{% static "css/contribute.css" %}" />
     <link rel="stylesheet" type="text/css" href="{{ site_settings.CSS }}" />
+    <link rel="stylesheet" type="text/css" href="{% static "css/contribute.css" %}" />
 
     {# set up jQuery for autocompletes and other purposes #}
     {# TODO: be more specific about which files need to be loaded?#}
@@ -45,38 +47,40 @@
 		  	var alatlngbounds = new Array();
 		  	//value stored in HTML with a trailing semi-colon
 		    var geoLatLng = (document.getElementById("geoLatLng").innerText||document.getElementById("geoLatLng").textContent)
-		    geoLatLng = geoLatLng.substring(0, geoLatLng.length - 1);
-		    //split of remaining semis, if any
-		    var aGeoLatLng = geoLatLng.split(";");
-		    for (var i = 0; i < aGeoLatLng.length; i++)
-				{
-					var aLatLong = aGeoLatLng[i].split("|");
-					var Lat = aLatLong[0];
-					var Long = aLatLong[1];
-					var PlaceName = aLatLong[2];
-					var latlngmark = new google.maps.LatLng(Lat, Long);
-					// add to the array we'll use for the bounds
-					alatlngbounds.push(latlngmark);
-					// establish individual markers
-					var marker = new google.maps.Marker({
-					  position: latlngmark,
-					  map: map,
-					  title:PlaceName
-					});
-				};
-			var latlngbounds = new google.maps.LatLngBounds();
-			for (var i = 0; i < alatlngbounds.length; i++){
-				latlngbounds.extend(alatlngbounds[i]);
-			}
-			map.fitBounds(latlngbounds);
-			var blistener = google.maps.event.addListener((map), 'bounds_changed', function(event) {
-				if (this.getZoom() > 11){
-					this.setZoom(11);
+              geoLatLng = geoLatLng.substring(0, geoLatLng.length - 1);
+
+            if (geoLatLng) {
+				//split of remaining semis, if any
+				var aGeoLatLng = geoLatLng.split(";");
+				for (var i = 0; i < aGeoLatLng.length; i++) {
+                    var aLatLong = aGeoLatLng[i].split("|");
+                    var Lat = aLatLong[0];
+                    var Long = aLatLong[1];
+                    var PlaceName = aLatLong[2];
+                    var latlngmark = new google.maps.LatLng(Lat, Long);
+                    // add to the array we'll use for the bounds
+                    alatlngbounds.push(latlngmark);
+                    // establish individual markers
+                    var marker = new google.maps.Marker({
+                        position: latlngmark,
+                        map: map,
+                        title: PlaceName
+                    });
+                }
+				var latlngbounds = new google.maps.LatLngBounds();
+				for (var j = 0; j < alatlngbounds.length; j++) {
+					latlngbounds.extend(alatlngbounds[j]);
 				}
-				google.maps.event.removeListener(blistener);
-			});
-			google.maps.event.trigger(map, 'resize');
-			map.setZoom(map.getZoom() );
+				map.fitBounds(latlngbounds);
+				var blistener = google.maps.event.addListener((map), 'bounds_changed', function (event) {
+					if (this.getZoom() > 11) {
+						this.setZoom(11);
+					}
+					google.maps.event.removeListener(blistener);
+				});
+				google.maps.event.trigger(map, 'resize');
+				map.setZoom(map.getZoom());
+            }
 		  }
 		</script>
     {% endif %}
@@ -171,13 +175,27 @@
             $( "#dialog-confirm" ).dialog({
                 autoOpen: false,
                 resizable: false,
-                height:250,
                 modal: true,
                 buttons: {
                     "{{ site_settings.ConLabelDeleteSubmit }}": function() {
                         $( this ).dialog('option', 'close', function(event, ui) {window.location.href = "/{{ site_identifier }}/contribute/{{ record.id }}/delete/";});
                         $( this ).dialog( "close" );
                     },
+                    "{{ site_settings.ConLabelDeleteCancel }}": function() {
+                        $( this ).dialog( "close" );
+                    }
+                }
+            });
+            $( "#view_full" ).click(function() {
+                $( "#modal_full" ).dialog( "open" );
+            });
+            $( "#modal_full" ).dialog({
+                autoOpen: false,
+                resizable: false,
+                width: 'auto',
+				autoResize: true,
+                modal: true,
+                buttons: {
                     "{{ site_settings.ConLabelDeleteCancel }}": function() {
                         $( this ).dialog( "close" );
                     }

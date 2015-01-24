@@ -2,40 +2,31 @@ from django.shortcuts import render, get_object_or_404, render_to_response
 from django.http import HttpResponseRedirect, HttpResponse
 from django.conf import settings
 from django.utils.http import urlquote
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.template import RequestContext
 import os.path
-import requests
-import json
-import sys
 import urllib.request
-
-
 from DataEntry.forms import UploadForm
 from DataEntry.models import Record, RecordObject, Geography
-from DataEntry.image import process_image
+from DataEntry.image import process_image, get_image_size
 from DataEntry.text import process_text
 from CrowdSourcing.hostdiscovery import site_settings
 from DataEntry.solr import solrsearch, solr_search_query
-from DataEntry.lmimetypes import mime
 from DataEntry.record_object_utilities import delete_record
 from DataEntry.configure import configure_site
 
 # ==================================
 
-def index(request, site_identifier):
+
+def index(request):
     """
     default page for site
     @param request: not expecting many at the default level
     @return: default start page
     """
-    context = {
-        'site_settings': settings,
-    }
     return HttpResponseRedirect('upload')
 
+
 def detail(request, site_identifier, record_id, slug=''):
-    '''
+    """
     @param request:
     @param site_identifier:
     @param record_id:
@@ -44,7 +35,7 @@ def detail(request, site_identifier, record_id, slug=''):
 
     Render a detail version of all the fields that were contributed asking for confirmation, deletion or further editing
     If slug == 'edit', then pass the variables to an editable form which returns to the main rendering for confirmation again.
-    '''
+    """
 
     geodata = {}
     message = request.GET.get('m','')
@@ -62,10 +53,6 @@ def detail(request, site_identifier, record_id, slug=''):
         print(geodata)
     try:
         recordobject = RecordObject.objects.filter(record_id=record_id).order_by('record_object_category_id')
-        if recordobject:
-            google_map_canvas = '400'
-        else:
-            google_map_canvas = '300'
     except RecordObject.DoesNotExist:
         recordobject = ''
         google_map_canvas = '300'
@@ -76,7 +63,6 @@ def detail(request, site_identifier, record_id, slug=''):
         'record': record,
         'recordobject': recordobject,
         'full': False,
-        'google_map_canvas': google_map_canvas,
         'geodata': geodata,
         'gMap': True,
         'showProvince': True,
@@ -178,6 +164,7 @@ def upload(request, site_identifier):
         'vita_thumb_url': vita_thumb_url,
         'message': message,
         'upload': True,
+        'upload_action': upload_action,
     }
     return render(request, 'DataEntry/upload.html', context)
 
@@ -246,3 +233,8 @@ def geosearch(request):
     results = solrsearch(request, 'geonames')
     return render_to_response('DataEntry/geo.html', {'results': results})
 
+
+def getsize(request, site_identifier):
+    #TODO: configure scoping of places by country and optionally provinces/admin1
+    results = get_image_size(request)
+    return HttpResponse(results, content_type='text/plain')
