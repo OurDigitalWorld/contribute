@@ -4,12 +4,12 @@
 
 {% block header %}
     <title>{% block page_title %}{% endblock %}: {{ site_settings.SiteName }}</title>
+    <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="{% static "css/base.css" %}" />
     <link rel="stylesheet" type="text/css" href="{% static "css/widgets.css" %}" />
     <link rel="stylesheet" type="text/css" href="{% static "css/forms.css" %}" />
     <link rel="stylesheet" type="text/css" href="{% static "css/changelists.css" %}" />
     <link rel="stylesheet" type="text/css" href="{% static "css/normalize.css" %}" />
-    <link rel="stylesheet" type="text/css" href="{% static "css/contribute.css" %}" />
     <link rel="stylesheet" type="text/css" href="{{ site_settings.CSS }}" />
     <link rel="stylesheet" type="text/css" href="{% static "css/contribute.css" %}" />
 
@@ -31,7 +31,7 @@
     {# TODO: deal with the option to have lat long in the individual records; or more than one lat/long #}
  {# generate the google map if we were able to get geodata back from solr=>geonames #}
     {% if gMap %}
-	   <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+	   <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false&language={{ site_settings.SiteLanguage }}"></script>
 	   <script type="text/javascript">
 		  function gMapInitialize() {
 			//set map generically
@@ -110,8 +110,9 @@
 
         function showProv(){
 			//alert('Actually executing showProv script');
-			var valCountry = $('#countryID option:selected').val();
-			var valCountryLabel = $('#countryID option:selected').text();
+            var selected_country = $('#countryID option:selected');
+			var valCountry = selected_country.val();
+			var valCountryLabel = selected_country.text();
 		// show province list
 			if (valCountry == 'CA'){
 				$('#co').val(valCountry);
@@ -136,23 +137,22 @@
 			}
 			//alert(valCountryLabel);
 			$('#noConstraint').hide();
-			$('#countryConstraint').text(valCountryLabel);
-			$('#countryConstraint').show();
+			$('#countryConstraint').text(valCountryLabel).show();
 			$('#provinceConstraint').hide();
 		}
 		function selectProv(){
-			var valProvince = $('#province option:selected').val();
-			var valProvinceLabel = $('#province option:selected').text();
+            var selected_province = $('#province option:selected');
+			var valProvince = selected_province.val();
+			var valProvinceLabel = selected_province.text();
 			$('#pr').val(valProvince);
-			$('#provinceConstraint').text(valProvinceLabel + ', ');
-			$('#provinceConstraint').show();
+			$('#provinceConstraint').text(valProvinceLabel + ', ').show();
 		}
 		function selectState(){
-			var valProvince = $('#state option:selected').val();
-			var valProvinceLabel = $('#state option:selected').text();
+            var selected_province = $('#state option:selected');
+			var valProvince = selected_province.val();
+			var valProvinceLabel = selected_province.text();
 			$('#pr').val(valProvince);
-			$('#provinceConstraint').text(valProvinceLabel + ', ');
-			$('#provinceConstraint').show();
+			$('#provinceConstraint').text(valProvinceLabel + ', ').show();
 		}
         </script>
     {% endif %}
@@ -178,7 +178,7 @@
                 modal: true,
                 buttons: {
                     "{{ site_settings.ConLabelDeleteSubmit }}": function() {
-                        $( this ).dialog('option', 'close', function(event, ui) {window.location.href = "/{{ site_identifier }}/contribute/{{ record.id }}/delete/";});
+                        $( this ).dialog('option', 'close', function() {window.location.href = "/{{ site_identifier }}/contribute/{{ record.id }}/delete/";});
                         $( this ).dialog( "close" );
                     },
                     "{{ site_settings.ConLabelDeleteCancel }}": function() {
@@ -209,41 +209,41 @@
         $(document).ready(function(){
             if(document.getElementById('#id_full_text') != null){
                 var txt = $('#id_full_text'),
-                        hiddenDiv = $(document.createElement('div')),
-                        content = null;
+                hiddenDiv = $(document.createElement('div')),
+                content = null;
                 txt.addClass('txtstuff');
                 hiddenDiv.addClass('hiddendiv textcommon');
                 $('body').append(hiddenDiv);
-                content = $('#id_full_text').val();
+                content = txt.val();
                 content = content.replace(/\n/g, '<br>');
                 hiddenDiv.html(content + '<br class="lbr">');
-                $('#id_full_text').css('height', hiddenDiv.height());
+                txt.css('height', hiddenDiv.height());
                 txt.on('keyup', function () {
                     content = $(this).val();
                     content = content.replace(/\n/g, '<br>');
                     hiddenDiv.html(content + '<br class="lbr">');
                     $(this).css('height', hiddenDiv.height());
                 });
-            };
+            }
 
             if(document.getElementById('#id_description') != null) {
                 var txt2 = $('#id_description'),
-                        hiddenDiv2 = $(document.createElement('div')),
-                        content2 = null;
+                hiddenDiv2 = $(document.createElement('div')),
+                content2 = null;
                 txt2.addClass('txtstuff');
                 hiddenDiv2.addClass('hiddendiv textcommon');
                 $('body').append(hiddenDiv2);
-                content2 = $('#id_description').val();
+                content2 = txt2.val();
                 content2 = content2.replace(/\n/g, '<br>');
                 hiddenDiv2.html(content2 + '<br class="lbr">');
-                $('#id_description').css('height', hiddenDiv2.height());
+                txt2.css('height', hiddenDiv2.height());
                 txt2.on('keyup', function () {
                     content2 = $(this).val();
                     content2 = content2.replace(/\n/g, '<br>');
                     hiddenDiv2.html(content2 + '<br class="lbr">');
                     $(this).css('height', hiddenDiv2.height());
                 });
-            };
+            }
 
            $('#terms_statement').hide();
            $('#terms_show').click(function () {

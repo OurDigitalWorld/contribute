@@ -6,8 +6,11 @@
 {% endblock %}
 
 
+{% block banner_title %}
+    {{ record.title }}
+{% endblock %}
+
 {% block content %}
-   <h1>{{ record.title }}</h1>
 
 {{ site_settings.ConLabelReviewEdit }}<br/>
 <hr>
@@ -22,7 +25,7 @@
             {% for file_object in recordobject %}
                 {% if file_object.record_object_category_id == 1  %}
                     <div class="pictureBlock">
-                        <img src="/media/project/{{ file_object.file_name }}" />
+                        <img src="/media/project/{{ file_object.file_name }}"  alt="{{ record.title }}" />
                    </div>
                 {% endif %}
             {% endfor %}
@@ -49,7 +52,7 @@
 
         <fieldset id="edit2">
             <div class="fieldContent">
-                <label for="id_location">{{ site_settings.ConLabelLocation }}</label>
+                <div class="label">{{ site_settings.ConLabelLocation }}</div>
                 {% include 'DataEntry/geography_update_block.html' %}
                 <div id="map_canvas" style="width: 400px; height: 300px"></div>
             </div>
@@ -60,7 +63,7 @@
 
         <fieldset id="edit3">
             <div class="fieldContent">
-                <label for="contributor">{{ site_settings.ConLabelContributor }}</label>
+                <div class="label">{{ site_settings.ConLabelContributor }}</div>
                 <div id="contributor">
                     <label for="id_contributor">{{ site_settings.ConLabelName }}</label><input id="id_contributor" type="text" name="contributor" value="{% if record.contributor %}{{ record.contributor }}{% endif %}" class="metatext"/>
                     <br/>
@@ -78,7 +81,7 @@
 
         <fieldset id="edit4">
             <div class="fieldContent">
-                <label for="id_rights">{{ site_settings.DetLabelCreativeCommons }}</label><br/>
+                <div class="label">{{ site_settings.DetLabelCreativeCommons }}</div><br/>
                 <img id="id_rights" src="{% static "img/by-nc-sa.png" %}" alt="BY-NC-SA">
                 <br/>
                 <br/>

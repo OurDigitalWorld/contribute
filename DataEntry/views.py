@@ -168,6 +168,7 @@ def upload(request, site_identifier):
     }
     return render(request, 'DataEntry/upload.html', context)
 
+
 def update(request, site_identifier, record_id):
     site_values = site_settings(request)
     site_id = site_values['site_id']
@@ -182,6 +183,7 @@ def update(request, site_identifier, record_id):
             return HttpResponseRedirect(target) # Redirect after POST
         return render_to_response('DataEntry/form_errors.html', {'form': form})
 
+
 def delete(request, site_identifier, record_id):
     #TODO:  in dev environment this is throwing "BrokenPipeError: [Errno 32] Broken pipe" errors
     #TODO: probably because the deletion of the file objects is lagging behind execution
@@ -190,6 +192,7 @@ def delete(request, site_identifier, record_id):
     if are_we_done == 'done' :
         redirect_url = '/%s/contribute/upload?m=delete' % site_identifier
         return HttpResponseRedirect(redirect_url)
+
 
 def confirm(request, site_identifier, record_id):
     site_values = site_settings(request)
@@ -221,12 +224,14 @@ def confirm(request, site_identifier, record_id):
         redirect_url = '/%s/contribute/%s?m=%s' % (site_identifier, record_id, message)
         return HttpResponseRedirect(redirect_url)
 
+
 def configure(request, site_identifier, vita_set, vita_site_id):
     #print('db_identifier: ', vita_set)
     #print('vita_site_id: ', vita_site_id)
     results = configure_site(vita_set, vita_site_id)
     #results="did something, maybe"
     return render_to_response('DataEntry/test.html', {'results': results})
+
 
 def geosearch(request):
     #TODO: configure scoping of places by country and optionally provinces/admin1

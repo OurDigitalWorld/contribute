@@ -126,22 +126,21 @@
           <label for="id_contributor_email">{{ site_settings.ConLabelEmail }}</label><br/>
           <input id="id_contributor_email" name="contributor_email" type="email" />
             <br/>
-          <label for="id_contributor_name_permission">{{ site_settings.ComLabelNameOK }}</label>
+          <label>{{ site_settings.ComLabelNameOK }}</label>
               <br/>
-          <input id="id_contributor_name_permission" name="contributor_name_permission" type="radio" value="True" {% if record.contributor_name_permission == True %}checked="checked" {% endif %}/> {{ site_settings.NBLabelYes }}
-          <input name="contributor_name_permission" type="radio" value="False" {% if record.contributor_name_permission == False%}checked="checked" {% endif %}/> {{ site_settings.NBLabelNo }}
+          <input id="id_contributor_name_permission_yes" name="contributor_name_permission" type="radio" value="True" {% if record.contributor_name_permission == True %}checked="checked" {% endif %}/> <label for="id_contributor_name_permission_yes">{{ site_settings.NBLabelYes }}</label>
+          <input  id="id_contributor_name_permission_no" name="contributor_name_permission" type="radio" value="False" {% if record.contributor_name_permission == False%}checked="checked" {% endif %}/> <label for="id_contributor_name_permission_no">{{ site_settings.NBLabelNo }}</label>
           </div>
          <div class="step_help">
             {% include 'DataEntry/help/help_contributor.html' %}
          </div>
          </fieldset>
-    {# TODO: display geographic seletion on page for user #}
-    {# TODO: fix location of pick list in autocomplete #}
      <fieldset id="step5">
       <div class="fieldContent">
           <p class="common-buttons-block" >
-                <input id="upload_submit" type="submit" class="save" value="{{ site_settings.ConLabelButtonUpload }}" />
-                <input type="reset" class="save" value="{{ site_settings.ConLabelButtonClear }}" />
+              <input type="hidden" name="rights" value="3" />
+              <input id="upload_submit" type="submit" class="save" value="{{ site_settings.ConLabelButtonUpload }}" />
+              <input type="reset" class="save" value="{{ site_settings.ConLabelButtonClear }}" />
           </p>
        </div>
          <div class="step_help">
@@ -164,58 +163,64 @@
            $('#form_body').hide();
            $('#step1').hide();
 
-           {% if site_settings.ConIncludeImage == '1' and site_settings.ConIncludeStory == '1' %}
-			$('#intro_choice').hide();
-		  $('#terms').change(  function() {
-			var checked = ($(this).is(':checked'));
-			if (checked){
-				$('#intro_choice').show();
-			}else{
-                window.location.reload();
-			}
+		   $('#terms').change(  function() {
+			    var checked = ($(this).is(':checked'));
+                if (checked)
+                    {{% if site_settings.ConIncludeImage == '1' and site_settings.ConIncludeStory == '1' %}
+                        $('#intro_choice').show();
+		            {%else%}
+                        $('#step1').show();
+                        $('#form_body').show();
+                    {% endif %}
+                    {% if site_settings.ConIncludeImage == '1' %}
+                       $('#upload_submit').hide();
+                       $('#step5help').hide();
+                       $('#step5warning').show();
+						gMapInitialize();
+                    {% endif %}
+                }else{
+                    window.location.reload();
+                }
 		   });
 
-           $('#id_send_file').on( "click", function( event ) {
+       {% if site_settings.ConIncludeImage == '1' %}
+           $('#id_image_file').on( "click", function() {
+               $('#upload_submit').show();
+               $('#step5warning').hide();
+               $('#step5help').show();
+            });
+       {% endif %}
+
+       {% if site_settings.ConIncludeImage == '1' and site_settings.ConIncludeStory == '1' %}
+           $('#intro_choice').hide();
+           $('#id_send_file').on( "click", function() {
               // $('id_image_file').disable(false);
                $('.upload_confirm').hide();
-			   $('#intro_choice').html('<h1>{{site_settings.ConLabelSendFile }}</h1>')
+			   $('#intro_choice').html('<h1>{{site_settings.ConLabelSendFile }}</h1>');
                $('#step1').show();
                $('#form_body').show();
                $('#step2-fulltext').hide();
-               gMapInitialize();
                $('#id_image_upload_block').show();
+				gMapInitialize();
                $('#upload_submit').hide();
                $('#step5help').hide();
                $('#step5warning').show();
             });
 
-           $('#id_send_story').on( "click", function( event ) {
+           $('#id_send_story').on( "click", function() {
                //$('id_image_file').disable(true);
                $('.upload_confirm').hide();
-			   $('#intro_choice').html('<h1>{{site_settings.ConLabelTellStory }}</h1>')
+			   $('#intro_choice').html('<h1>{{site_settings.ConLabelTellStory }}</h1>');
                $('#step1').show();
                $('#form_body').show();
+				gMapInitialize();
                $('#step2-description').hide();
-               gMapInitialize();
-
                $('#id_image_upload_block').hide();
-            });
-           $('#id_image_file').on( "click", function( event ) {
                $('#upload_submit').show();
-               $('#step5warning').hide();
                $('#step5help').show();
+               $('#step5warning').hide();
             });
-			{%else%}
-		  $('#terms').change(  function() {
-			var checked = ($(this).is(':checked'));
-			if (checked){
-				$('#step1').show();
-			}else{
-                window.location.reload();
-			}
-		   });
-
-           {% endif %}
+         {% endif %}
 
         });
     </script>

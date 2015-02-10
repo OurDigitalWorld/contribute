@@ -6,11 +6,12 @@
 {% endblock %}
 
 
+{% block banner_title %}
+    {{ record.title }}
+{% endblock %}
+
+
 {% block content %}
-
-
-
-   <h1>{{ record.title }}</h1>
 
     {% if message %}
     <div class="alert">{{ message }}</div>
@@ -23,18 +24,18 @@
             {% for file_object in recordobject %}
                 {% if file_object.record_object_category_id == 1  %}
                     <div class="pictureBlock">
-                        <img src="/media/project/{{ file_object.file_name }}" />
+                        <img src="/media/project/{{ file_object.file_name }}" alt="{{ record.title }}" />
                    </div>
                 {% elif file_object.record_object_category_id == 2 %}
                     <button id="view_full">{{ site_settings.ConLabelSeeFull }}</button>
                     <div id="modal_full" >
-                        <img src="/media/project/{{ file_object.file_name }}" />
+                        <img src="/media/project/{{ file_object.file_name }}"  alt="{{ record.title }}" />
                     </div>
                     <br/><br/>
                 {% endif %}
             {% endfor %}
             {% if record.description %}
-            <label for="description">{{ site_settings.ConLabelDescription }}</label>
+            <div class="label">{{ site_settings.ConLabelDescription }}</div>
             <div id="description">{{ record.description|linebreaks }}</div>
             {% endif %}
             {% if record.full_text %}
@@ -57,8 +58,8 @@
             <div id="map_canvas" style="width: 400px; height: 300px"></div>
             <br/>
         {% endif %}
-            <label for="contributor">{{ site_settings.ConLabelContributor }}</label>
-            <div id="contributor">
+            <div class="label">{{ site_settings.ConLabelContributor }}</div>
+            <div id="id_contributor">
               {{ record.contributor }}
                 <a href="mailto:{{ record.contributor_email }}">{{ record.contributor_email }}</a><br/>
                 <div class="alert">
@@ -70,7 +71,7 @@
                 </div>
             </div>
             <br/>
-            <label for="id_rights">{{ site_settings.DetLabelCreativeCommons }}</label><br/>
+           <div class="label">{{ site_settings.DetLabelCreativeCommons }}</div><br/>
             <img id="id_rights" src="{% static "img/by-nc-sa.png" %}" alt="BY-NC-SA">
             <br/>
              <div class="upload_terms">

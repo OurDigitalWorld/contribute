@@ -1,33 +1,30 @@
 
-            <div id="Geography">
-                <dl id="geographyChecklist">
-                    {% for geo in geodata %}
-                       <dt>
-                        <input id="id_location" type="checkbox" name="geonameid" value="{{ geo.id }}" checked="true" />
-                       {{ geo.name }}
-                       {% if geo.admin1text %}
-                           , {{ geo.admin1text }}
-                        {% endif %}
-                        {{ geo.countrytext }}<br/>
-                        {{ geo.latitude }}, {{ geo.longitude }}
-                        </dt>
-                    {% endfor %}
-                </dl>
-                <input type="hidden" id="co" name="co" value="{{ constraint_country }}" />
-                <input type="hidden" id="pr" name="pr" value="{{ constraint_province }}" />
-                <input type="hidden" id="colab" name="colab" value="{{ constraint_country_label }}" />
+<div id="Geography">
+    <dl id="geographyChecklist">
+        {% for geo in geodata %}
+           <dt>
+            <input id="id_location_{{ geo.id }}" type="checkbox" name="geonameid" value="{{ geo.id }}" checked="checked" />
+           <label for="id_location_{{ geo.id }}">{{ geo.name }}{% if geo.admin1text %}, {{ geo.admin1text }}{% endif %}{% if geo.countrytext %}, {{ geo.countrytext }}{% endif %}
+               </label>
+            </dt>
+            <dd>{{ geo.latitude }}, {{ geo.longitude }}</dd>
+        {% endfor %}
+    </dl>
+    <input type="hidden" id="co" name="co" value="{{ constraint_country }}" />
+    <input type="hidden" id="pr" name="pr" value="{{ constraint_province }}" />
+    <input type="hidden" id="colab" name="colab" value="{{ constraint_country_label }}" />
 
 
-                <div id="geoLatLng" class="hide-text"> {% for geo in geodata %}{{ geo.latitude }}|{{ geo.longitude }}|{{ geo.name }};{% endfor %}</div>
-                <div class="alert">{{ site_settings.ConLabelConstraints }}
-                    <div id="noConstraint" class="inline"></div>
-                    <div id="provinceConstraint" class="inline">{% if constraint_province %}{{ constraint_province }}, {% endif %}</div>
-                    <div id="countryConstraint" class="inline">{{ constraint_country_label }}</div>
-                </div>
-                {% include 'DataEntry/country.html' %}<br/>
-                {% include 'DataEntry/provinceState.html' %}  
-                <div class="ui-widget">
-                    <label for="addGeoNameID">{{ site_settings.ConLabelLocationAdd }}</label>
-                    <input id="addGeoNameID"/>
-                </div>    ​
-            </div>
+    <div id="geoLatLng" class="hide-text"> {% for geo in geodata %}{{ geo.latitude }}|{{ geo.longitude }}|{{ geo.name }};{% endfor %}</div>
+    <div class="alert">{{ site_settings.ConLabelConstraints }}
+        <div id="noConstraint" class="inline"></div>
+        <div id="provinceConstraint" class="inline">{% if constraint_province %}{{ constraint_province }}, {% endif %}</div>
+        <div id="countryConstraint" class="inline">{{ constraint_country_label }}</div>
+    </div>
+    {% include 'DataEntry/country.html' %}<br/>
+    {% include 'DataEntry/provinceState.html' %}
+    <div class="ui-widget">
+        <label for="addGeoNameID">{{ site_settings.ConLabelLocationAdd }}</label>
+        <input id="addGeoNameID"/>
+    </div>    ​
+</div>
