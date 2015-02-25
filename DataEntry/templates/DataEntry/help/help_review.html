@@ -13,16 +13,16 @@
 {% endcomment %}
 {% if site_settings.SiteLanguage == 'fr' %}
 	{% if recordobject and not record.description  %}
-		<div class="alert">Descriptions are really useful<br/></div>
+		<div class="alert">Une bonne description renforce votre image.<br/></div>
 	{% endif %}
 	{% if not recordobject and not record.full_text   %}
-		<div class="alert">We didn't get your story<br/></div>
+		<div class="alert">Nous ne avons pas votre histoire.<br/></div>
 	{% endif %}
 	{% if not geodata  %}
-		<div class="alert">Is it possible to tell us where?<br/></div>
+		<div class="alert">Est-il possible d'ajouter un emplacement?<br/></div>
 	{% endif %}
 	{% if not record.contributor_email %}
-		<div class="alert">We won't make it public, but your email contact information is required.<br/></div>
+		<div class="alert">Nous ne allons pas la rendre public, mais une adresse courriel valide est nécessaire.<br/></div>
 	{% endif %}
 {% else %}
 	{% if recordobject and not record.description   %}

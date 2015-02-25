@@ -20,8 +20,9 @@ v1_api.register(RightsResource())
 admin.autodiscover()
 
 urlpatterns = patterns('',
-   url(r'^(?P<site_identifier>\w+)/contribute/', include('DataEntry.urls', namespace="DataEntry")),
-    url(r'geosearch$', DataEntry.views.geosearch, name='geosearch'),
-    url(r'^api/', include(v1_api.urls)),
-    url(r'^admin/', include(admin.site.urls)),
-) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+                       url(r'^(?P<site_identifier>\w+)/contribute/',
+                           include('DataEntry.urls', namespace="DataEntry")),
+                       url(r'geosearch$', DataEntry.views.geosearch, name='geosearch'),
+                       url(r'^api/', include(v1_api.urls)),
+                       url(r'^admin/', include(admin.site.urls)),
+                       ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

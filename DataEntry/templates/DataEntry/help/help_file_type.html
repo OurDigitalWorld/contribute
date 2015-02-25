@@ -1,7 +1,13 @@
 {% load staticfiles %}
 
 {% if site_settings.SiteLanguage == 'en' %}
+<p>Your picture can be one of these formats: JPG, GIF, PNG or TIF.</p><br/>
+
+<p>Your TITLE is text-only, and can be up to 256 characters long.</p> 
 
 {% elif site_settings.SiteLanguage == 'fr' %}
+<p>Votre image peut être l'un de ces formats: JPG, GIF, PNG or TIF.</p><br/>
+
+<p>Votre titre est texte clair, et peut être jusqu'à 256 caractères.</p> 
 
 {% endif %}

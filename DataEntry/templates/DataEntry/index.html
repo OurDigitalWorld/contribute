@@ -15,7 +15,7 @@
         {% for records in most_recent_contributions %}
             <li>
             {% for ro in records.recordobject_set.all %}
-                {% if ro.record_object_category_id = 0 %}
+                {% if ro.record_object_category_id == 0 %}
 
                 <img src="/media/project/{{ ro.file_name }}" />
                 {% endif %}

@@ -1,7 +1,15 @@
 {% load staticfiles %}
 
 {% if site_settings.SiteLanguage == 'en' %}
-    Something useful
+<p>Tell us places important to this contribution - we can map them. Start by selecting the Country, then (if Canada or the U.S.) the Province/State. </p>
+<p>Next type the Place name into the box. A spinner will start - wait for a few seconds and you'll get a list of places matching that name. Click on the one you want, and we'll pin it on the map.  Zoom in and confirm we have the right place.</p> 
+<p>You can continue to ADD as many map pins as you want.</p>
+<p>Hint:  Did not pin the correct place? Just UNCHECK a wrong location and select a better one.  The pin won't disappear but only those places that are still checked will be saved.</p>
+
 {% elif site_settings.SiteLanguage == 'fr' %}
+<p>Dites-nous lieux importants à cette contribution - nous pouvons les localiser sur une carte. Commencez par sélectionner le pays. Si le Canada ou les États-Unis, sélectionnez aussi la province ou de l'État.</p>
+<p>Ensuite, tapez le nom d'emplacement dans la boîte. Un spinner va commencer - attendez quelques secondes et vous obtiendrez une liste des emplacements correspondant à ce nom. Cliquez sur l'emplacement que vous voulez et il apparaîtra sur la carte. Consultez la carte et confirmer qu'il est correct.</p>
+<p>Vous pouvez continuer à ajouter des endroits supplémentaires.</p>
+<p>Suggestion: pas le bon endroit? Il suffit de décocher un mauvais endroit et en sélectionner un autre. Le marqueur de carte ne va pas disparaître mais seulement ces endroits qui sont encore vérifiés sera sauvé.</p>
 
 {% endif %}

@@ -9,10 +9,9 @@ def solrsearch(request, index):
     A lightweight function for passing simple general field searches to a solr index for results
     """
 
-    solr_index = "%s%s" % (settings.SOLR_INDEX_URL,index)
+    solr_index = "%s%s" % (settings.SOLR_INDEX_URL, index)
     solr = pysolr.Solr(solr_index, timeout=10)
-    #print('solr_index: ', solr_index)
-    query = request.GET['term'] +'*'
+    query = request.GET['term'] + '*'
     if request.GET.get('c'):
         country = request.GET['c']
     else:
@@ -29,7 +28,6 @@ def solrsearch(request, index):
         results = solr.search(query, sort='priority asc, name asc', row='1000')
     else:
         results = solr.search(query)
-    #print(results)
     return results
 
 
@@ -38,18 +36,18 @@ def solr_search_query(query, index):
     A lightweight function for passing simple general field searches to a solr index for results
     """
 
-    solr_index = "%s%s" % (settings.SOLR_INDEX_URL,index)
+    solr_index = "%s%s" % (settings.SOLR_INDEX_URL, index)
     solr = pysolr.Solr(solr_index, timeout=10)
-    #print('solr_index: ', solr_index)
     results = solr.search(query, wt='json')
-    #print(results)
     return results
+
 
 def solr_by_field(field, value, index):
     """
     A lightweight function for passing simple field searches to a solr index for results
     """
-    solr_index = "%s%s" % (settings.SOLR_INDEX_URL,index)
+
+    solr_index = "%s%s" % (settings.SOLR_INDEX_URL, index)
     solr = pysolr.Solr(solr_index, timeout=10)
     query = '(%s:%s)' % (field, value)
     results = solr.search(query)

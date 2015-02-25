@@ -1,7 +1,15 @@
 {% load staticfiles %}
 
 {% if site_settings.SiteLanguage == 'en' %}
+<p>PHOTO: Describe your photo - tell us what it's about, who's in it, where and when it was taken, and what details can also be seen in the surrounding background. </p> <br/>
+
+<p>STORY: Your story can be as long as you'd like. You can type right into this text box, or copy and paste from another application.</p> 
+<p>Hint: Don't bother with formatting as we just store plain text.</p>
+
 
 {% elif site_settings.SiteLanguage == 'fr' %}
+<p>PHOTO: Décrivez votre photo - nous raconter l'histoire et le nom des personnes. Où et quand at-il été pris, et quels détails peut également être vu dans le contexte environnant.</p> <br/>
 
+<p>HISTOIRE: Votre histoire peut être aussi longtemps que nécessaire. Tapez directement dans cette zone de texte, ou de copier et coller depuis une autre application.</p> 
+<p>Suggestion: Ne vous embêtez pas avec le formatage parce que nous stockons seulement texte clair.</p>
 {% endif %}

@@ -1,15 +1,11 @@
 from django.contrib import admin
 
-# Register your models here.
-from django.contrib import admin
-from django.utils.timezone import activate
-#activate(settings.TIMEZONE)
-
 from DataEntry.models import Right
 admin.site.register(Right)
 
 
 from DataEntry.models import Record
+
 
 class RecordAdmin(admin.ModelAdmin):
     fieldsets = [
@@ -27,6 +23,7 @@ admin.site.register(Site)
 
 
 from DataEntry.models import SiteSetup
+
 
 class SiteSetupAdmin(admin.ModelAdmin):
     list_display = ['site', 'afield', 'avalue']

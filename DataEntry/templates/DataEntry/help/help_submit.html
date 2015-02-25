@@ -1,7 +1,9 @@
 {% load staticfiles %}
 
 {% if site_settings.SiteLanguage == 'en' %}
-
+<p>Once you click on {{ site_settings.ConLabelConfirm|upper }}, please be patient - if you are submitting a large image it may take a few minutes to process.</p>
+<p>Don't leave this screen - you will be advanced automatically to a review screen where you can choose to EDIT and SUBMIT your contribution.</p>
 {% elif site_settings.SiteLanguage == 'fr' %}
-
+<p>Lorsque vous cliquez {{ site_settings.ConLabelConfirm|upper }}, se il vous plaît être patient - si votre image est grande, cela peut prendre quelques minutes pour traiter.</p>
+<p>Ne laissez pas cet écran - vous serez automatiquement avancée a la révision écran où vous pouvez choisir d'éditer et de soumettre votre contribution.</p>
 {% endif %}

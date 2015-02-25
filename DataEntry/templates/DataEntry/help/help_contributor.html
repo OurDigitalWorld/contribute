@@ -1,7 +1,12 @@
 {% load staticfiles %}
 
 {% if site_settings.SiteLanguage == 'en' %}
+<p>We need your name to credit this contribution, and a valid email.</p>
+<p>We will not display your name without your permission.</p>
+<p>We will NEVER display your email, but still need it to send you confirmation.</p>
 
 {% elif site_settings.SiteLanguage == 'fr' %}
-
+<p>Nous avons besoin de votre nom de créditer cette contribution, et une adresse courriel valide.
+<p>Nous ne allons pas afficher votre nom sans votre permission.</p>
+<p>Nous ne serons jamais afficher votre courriel, mais toujours besoin d'envoyer une confirmation.</p>
 {% endif %}

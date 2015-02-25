@@ -10,7 +10,7 @@ class UploadForm(forms.ModelForm):
     contributor = forms.CharField(max_length=256)
     contributor_email = forms.EmailField(required=False)
     contributor_name_permission = forms.BooleanField(required=False)
-    image_file  = forms.FileField(
+    image_file = forms.FileField(
         label="Pick a file",
         help_text="max. 42 MBs",
         required=False
@@ -18,14 +18,10 @@ class UploadForm(forms.ModelForm):
 
     def save(self, request, site_id, record_id, *args, **kwargs):
         record_id = int(record_id)
-        #print("UploadSave: ", request)
-        #print("record_id: ", record_id)
-        #print("title: ", request.get('title'))
         post = super(UploadForm, self).save(commit=False)
         if record_id > 0:
             post.record_id = record_id
         post.title = request.POST.get('title')
-        #print(post.title)
         post.description = request.POST.get('description')
         post.full_text = request.POST.get('full_text')
         post.contributor = request.POST.get('contributor')
@@ -41,32 +37,32 @@ class UploadForm(forms.ModelForm):
         if record_id == 0:
             record_id = post.pk
         geonameids = request.POST.getlist('geonameid')
-
-        #rights_id = request.get('rights')
-        #Record.rights.objects.all().delete()
-        #if rights_id:
-        #    post.rights.add(rights_id)
-        #print(site_id)
-        #print("geonamids", geonameids)
         Geography.objects.filter(record_id=record_id).delete()
-        for id in geonameids:
-            if id != '':
-                #print("id geo", id)
+        for gid in geonameids:
+            if gid != '':
                 new_gn = Geography(
-                    record_id = record_id,
-                    geonameid = id
+                    record_id=record_id,
+                    geonameid=gid
                 )
                 new_gn.save()
         return record_id
 
-
     class Meta:
         model = Record
-        fields = ['title', 'description', 'full_text','contributor', 'contributor_email', 'rights', 'contributor_name_permission']
-        exclude = ['agency_id', 'slug', 'image_file']
+        fields = ['title',
+                  'description',
+                  'full_text',
+                  'contributor',
+                  'contributor_email',
+                  'rights',
+                  'contributor_name_permission']
+        exclude = ['agency_id',
+                   'slug',
+                   'image_file']
 
     def __init__(self, *args, **kwargs):
-        super(UploadForm, self).__init__(*args, **kwargs) # Call to ModelForm constructor
+        super(UploadForm, self).__init__(*args, **kwargs)
+        # Call to ModelForm constructor
         self.fields['title'].widget.attrs['size'] = 80
         self.fields['title'].widget.attrs['class'] = 'title'
         self.fields['description'].widget.attrs['rows'] = 10
@@ -78,11 +74,3 @@ class UploadForm(forms.ModelForm):
         self.fields['contributor'].widget.attrs['size'] = 80
         self.fields['contributor'].widget.attrs['class'] = 'contributor'
         self.fields['contributor_email'].widget.attrs['size'] = 80
-
-
-
-#class GeoNamesSearchForm(SearchForm):
-
-
- #   def no_query_found(self):
-#        return self.searchqueryset.all()
