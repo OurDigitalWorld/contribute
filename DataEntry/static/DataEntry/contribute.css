@@ -1,0 +1,441 @@
+/* VITA-6 Contribute module ©2015_01_15 */
+
+#c_container {
+	max-width: 57.56em;
+	padding: 0;
+	margin: auto;
+	background-color: #ffffff;
+}
+
+#banner {
+	min-height: 6.25em;
+	max-width: 57.5em;	
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+}
+
+#banner img {
+	width: 100%;
+}
+
+#branding {
+	max-width: 57.5em;
+	margin: 0;
+	padding: 0;
+}
+
+#branding h1{
+	font-size: 1.7em;
+	color: #385f8a;
+	margin-top: 10px;
+	margin-right: 75px;
+	padding: 0 1em;
+}
+
+
+/* INTRO SECTION */
+#intro {
+	max-width: 57.5em;
+	margin: 0;
+	padding: 0 2em;
+}
+
+#intro_twothirds {
+	float: left;
+	width: 63%;
+	border: 1px solid #b4c3bd;
+	border-radius:5px;
+	padding: 0 1em;
+	margin: 0 0 0 10px;
+}
+
+.upload_confirm {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.upload_intro  {
+	font-size: 1.3em;
+	font-weight: normal;
+	font-style: normal;
+	text-align: left;
+	line-height: 1.1em;
+	text-indent: 0;
+	margin: 10px 0;
+}
+
+.upload_terms {
+	margin: 8px 35px 42px;
+	border-top: 1px solid #b4c3bd;
+	border-bottom: 1px solid #b4c3bd;
+	border-radius:5px;
+	padding: 1em 0;
+}
+
+.upload_terms input[type="checkbox"] {
+	margin-right: 4px;
+}
+
+.upload_terms input[type="button"] {
+	margin-left: 10px;
+}
+
+#call_terms_statement {
+	font-weight: bold;
+	color: #005392;
+}
+
+#terms_statement {
+	border: 1px solid #fef8f7;
+	border-radius:5px;
+	margin: 10px 5px 0;
+	background-color: #fef8f7;
+	padding: 1em;
+	
+}
+
+#intro_choice {
+	font-size: 1.3em;
+	font-weight: normal;
+	font-style: normal;
+	text-align: center;
+	line-height: 1.1em;
+	text-indent: 0;
+	margin-top: 0;
+    margin-bottom: 10px;
+}
+
+#intro_choice h1{
+	font-size: 1.3em;
+	color: #385f8a;
+	margin-top: 10px;
+	padding: 0;
+	text-align: center;
+}
+
+input#id_send_file {
+	cursor: pointer;
+	margin-top: 0;
+	padding: 0 1em;
+	font-size: 1.1em;
+	font-weight: normal;
+	font-style: normal;
+	line-height: normal;
+	text-align: center;
+	background: url("http://images.ourontario.ca/static/img/icon_contribute_overlay_upload.png") no-repeat center 80px;
+	border-style: none;
+	height: 140px;
+	display: inline-block;
+}
+
+input#id_send_story {
+	cursor: pointer;
+	margin-top: 0;
+	padding: 0 1em;
+	font-size: 1.1em;
+	font-weight: normal;
+	font-style: normal;
+	line-height: normal;
+	text-align: center;
+	background: url("http://images.ourontario.ca/static/img/icon_contribute_overlay_writestory.png") no-repeat center 80px;
+	border-style: none;
+	height: 140px;
+	display: inline-block;
+}
+
+#intro_onethird {
+	float: right;
+	width: 30%;
+	margin: 0 10px 0 0;
+}
+
+/* CLEAR - USE AS NEEDED */
+
+#clear {
+	clear: both;
+}
+
+.clear {
+	clear: both;
+}
+
+/* FORM SECTION */
+
+.module {
+	border: 1px solid #ffffff;
+	border-radius:5px;
+	background-color: #faf8ff;
+	padding: 0 1em;	
+	margin: 10px 0;
+}
+
+
+/* FORM-SPECIFIC STEPS */
+
+.fieldContent {
+	float: left;
+	width: 63%;
+	padding: 1em;
+	margin: 0;
+}
+.label {
+	font-variant: normal;
+	font-size: 1em;
+	line-height: 1em;
+	text-align: left;
+}
+
+.step_help {
+	float: right;
+	width: 30%;
+	padding: 1em 0;	
+	margin: 0;
+	font: italic .9em "Lucida Grande", Lucida, Verdana, sans-serif;
+}
+
+.update {
+	max-width: 57.5em;
+	padding: .5em 2em;
+	margin: 0 0 5px;
+	background-color: #e5ecf5;	
+}
+
+fieldset#step1, fieldset#step2, fieldset#step3, fieldset#step4, fieldset#edit1, fieldset#edit2, fieldset#edit3, fieldset#edit4, fieldset#review1 {
+	max-width: 57.5em;
+	padding: 0 1em;
+	background-image: none;
+	background-color: transparent;
+	border-top: 1px solid #e5ecf5;
+	border-bottom-style: none;
+	border-left-style: none;
+	border-right-style: none;
+	margin: 0 0 10px;
+}
+
+fieldset#step1 .fieldContent label {
+	font-variant: normal;
+	font-size: 1em;
+	line-height: 1em;
+	text-align: left;
+}
+
+#subject_1 {
+	visibility: hidden;
+	display: none;
+}
+
+#id_image_upload_block label {
+	font-variant: normal;
+	font-size: 1em;
+	line-height: 1em;
+	text-align: left;
+}
+
+input#id_title.title {
+	width: 30em;	
+}
+
+#step2-description label {
+	font-variant: normal;
+	font-size: 1em;
+	line-height: 1em;
+	text-align: left;
+}
+
+#step2-description textarea {
+	width: 30em;		
+}
+
+/* ---auto open textbox ---- */
+textarea#id_description {
+   min-height: 100px;
+   min-width: 30em; /* --this can NOT be % or it breaks javascript, and it must be identical to the widdth in .textcommon - */
+   padding: 5px;   
+   margin-bottom: 14px;
+}
+/* the styles for 'commmon' are applied to both the textarea and the hidden clone */
+/* these must be the same for both */
+
+textarea#id_full_text {
+   min-height: 100px;
+   min-width: 30em; /* --this can NOT be % or it breaks javascript, and it must be identical to the width in .textcommon - */
+   padding: 5px;   
+   margin-bottom: 14px;
+}
+/* the styles for 'commmon' are applied to both the textarea and the hidden clone */
+/* these must be the same for both */
+.textcommon {
+    min-width: 30em; /* --this can NOT be % or it breaks javascript, and it must be identical to the width in textarea#id_full_text - */
+    min-height: 100px;
+    overflow: hidden;
+}
+
+
+div#step2-fulltext label {
+	font-variant: normal;
+	font-size: 1em;
+	line-height: 1em;
+	text-align: left;
+}
+div#step2-fulltext textarea#id_full_text {
+	width: 30em;		
+}
+
+#Geography {
+/* much of Geo style is in base.css as is used across modules */
+	max-width: 50em;		
+}
+#geographyChecklist {
+	max-width: 30em;	
+}
+#geographyChecklist dd {
+	text-indent: 1em;
+	padding-left: 10px;
+}
+
+
+#Geography .ui-widget {
+	font-variant: normal;
+	font-size: 1em;
+	line-height: 1em;
+	text-align: left;
+	width: 25em;
+}
+
+#Geography label {
+	font-variant: normal;
+	font-size: 1em;
+	line-height: 1em;
+	text-align: left;
+}
+
+#Geography input#addGeoNameID {
+	width: 25em;
+}
+
+fieldset#step4 label {
+	font-variant: normal;
+	font-size: 1em;
+	line-height: 1em;
+	text-align: left;
+}
+
+fieldset#step4 input#id_contributor {
+	width: 30em;
+}
+
+fieldset#step4 input#id_contributor_email {
+	width: 30em;
+}
+
+
+fieldset#step5 {
+	max-width: 57.5em;
+	padding: 0;
+	border-top: 1px solid #e5ecf5;
+	margin-bottom: 15px;
+	background-color: #e5ecf5;
+	background-image: none;
+}
+
+fieldset#step5 input[type="submit"] {
+	background:  #ffffff url("http://images.ourontario.ca/static/img/submit-upload.gif") no-repeat right center;
+	height: 26px;
+	width: 120px;
+	font-size: 1.2em;	
+	text-align: left;
+	text-indent: 5px;
+	color: #797979;
+	font-variant: none;
+	vertical-align: middle;
+	padding-bottom: 20px;
+	border-radius: 10px;
+	border: 1px solid #756161;
+	box-shadow: 1px 3px 3px #eeeded;
+	position: relative;
+	left: 50px;
+}
+
+fieldset#step5 input[type="reset"] {
+	background: #ffffff url("http://images.ourontario.ca/static/img/submit-reset.gif") no-repeat right center;
+	height: 26px;
+	width: 120px;
+	font-size: 1.2em;
+	text-align: left;
+	text-indent: 5px;
+	color: #797979;
+	font-variant: none;
+	vertical-align: middle;
+	padding-bottom: 20px;
+	border-radius: 10px;
+	border: 1px solid #756161;
+	box-shadow: 1px 3px 3px #eeeded;
+	position: relative;
+	left: 150px;
+}
+
+fieldset#review1 #location {
+	max-width: 30em;	
+}
+
+fieldset#review1 #geoLatLng.hide-text {
+	max-width: 30em;	
+}
+
+
+#finalSubmit {
+	font-size: 1.3em;
+	color: #941651;
+	border-top: 1px solid #c0c0c0;
+	border-bottom: 1px solid #c0c0c0;
+	padding: 15px;
+	border-radius:10px;
+	width: 75%;
+	text-align: center;
+	margin: auto;
+}
+
+
+button#submit_link {
+	color: #941100;
+	font-size: 1.3em;
+	font-weight: bold;
+	 background: white url("http://images.ourontario.ca/static/img/nav-bg.gif") bottom repeat-x;
+	border: 1px solid #bbb;
+    border-color: #ddd #aaa #aaa #ddd;
+    padding: 0 2em;
+	margin-right: 45px;
+}
+
+button#edit_link, button#delete_dialog {
+	margin-right: 25px;
+	padding: 0 1em;
+}
+
+/* FOOTER SECTION */
+
+#site_home {
+	max-width: 57.56em;
+	font-variant: none;
+	margin: auto;
+	padding: 1em 0;
+	text-align: center;
+	clear: both;
+}
+
+#site_home a:link {
+	font-size: 1.3em;
+
+}
+#site_home a:hover {
+	font-weight: bold;
+	color: #0432ff;
+}
+
+.footer {
+	max-width: 57.56em;
+	padding: 1em 0;
+	margin: auto;
+	clear: both;
+}
