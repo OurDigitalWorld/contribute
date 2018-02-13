@@ -11,7 +11,11 @@ def solrsearch(request, index):
 
     solr_index = "%s%s" % (settings.SOLR_INDEX_URL, index)
     solr = pysolr.Solr(solr_index, timeout=10)
-    query = request.GET['term'] + '*'
+    query = ''
+    if request.GET.get('term'):
+        query = request.GET['term'] + '*'
+    if request.GET.get('id'):
+        query = '%s id:"%s"' % (query, request.GET.get('id'))
     if request.GET.get('c'):
         country = request.GET['c']
     else:

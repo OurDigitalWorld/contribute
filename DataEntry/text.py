@@ -35,7 +35,7 @@ def extract_text(upload_file_name):
     mt = mime(file_extension)
     with open(upload_file_name, mode='rb') as fh:
         mydata = fh.read()
-        r = requests.put('http://localhost:9998/tika',
+        r = requests.put('http://172.18.2.9:9998/tika',
                          data=mydata,
                          headers={'content-type': mt},
                          params={'file': upload_file_name})

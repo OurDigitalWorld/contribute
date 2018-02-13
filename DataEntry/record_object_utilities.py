@@ -32,10 +32,10 @@ def add_record_object(record_id, record_object_category_id, target_file, source_
     object_height = 0
     file_name = target_file.replace(settings.PROJECT_MEDIA_ROOT, '')
     original_file_name = source_file.replace(settings.PROJECT_MEDIA_ROOT, '')
-    if record_object_category_id == 1 or \
-       record_object_category_id == 2 or \
-       record_object_category_id == 3 or \
-       record_object_category_id == 0:
+    if record_object_category_id == 1 \
+            or record_object_category_id == 2 \
+            or record_object_category_id == 3 \
+            or record_object_category_id == 0:
         img = Image.open(target_file)
         object_width = img.size[0]
         object_height = img.size[1]
@@ -75,14 +75,15 @@ def delete_record_objects(record_id):
         delete_file(file_name, settings.PROJECT_MEDIA_ROOT)
     # find and delete uploaded file
     uploaded_file_record = Record.objects.get(pk=record_id)
+    # for file in uploaded_file_list:
     file_name = uploaded_file_record.image_file
     if file_name:
-        upload_path = "%s/" % settings.MEDIA_ROOT
-        #  because MEDIA_ROOT is slashless
+        upload_path = "%s/" % settings.MEDIA_ROOT  # because MEDIA_ROOT is slashless
         delete_file(file_name, upload_path)
     return "done"
 
 
 def delete_file(file_name, path):
     file_path = "%s%s" % (path, file_name)
-    os.remove(file_path)
+    if os.path.isfile(file_path):
+        os.remove(file_path)

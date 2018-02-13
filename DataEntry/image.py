@@ -1,11 +1,11 @@
-__author__ = 'walter'
-from PIL import Image
-_imaging = Image.core
+
 import urllib.request
 import io
 import warnings
 from django.conf import settings
 from DataEntry.record_object_utilities import make_file_name, add_record_object
+from PIL import Image
+_imaging = Image.core
 
 
 def process_image(record_id, upload_file_name):
@@ -55,4 +55,23 @@ def get_image_size(request):
     size_values = img.size
     # return height, then width
     return_string = '%s,%s' % (size_values[1], size_values[0])
+    return return_string
+
+
+def get_image_size2(request):
+    source_file = ''
+    warnings.simplefilter('ignore', Image.DecompressionBombWarning)
+    url = request.GET.get('url', '')
+    filepath = request.GET.get('fp', '')
+    if url:
+        # url = 'http://www.maritimehistoryofthegreatlakes.ca/temp/36-4-1934.jp2'
+        source_file = io.BytesIO(urllib.request.urlopen(url).read())
+    elif filepath:
+        source_file = filepath
+    img = Image.open(source_file)
+    if img.mode != "RGB":
+        img = img.convert("RGB")
+    sizevalues = img.size
+    # return height, then width
+    return_string = '%s,%s' % (sizevalues[1], sizevalues[0])
     return return_string

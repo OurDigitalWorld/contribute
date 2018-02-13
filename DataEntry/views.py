@@ -5,7 +5,7 @@ import os.path
 import urllib.request
 from DataEntry.forms import UploadForm
 from DataEntry.models import Record, RecordObject, Geography
-from DataEntry.image import process_image, get_image_size
+from DataEntry.image import process_image, get_image_size, get_image_size2
 from DataEntry.text import process_text
 from CrowdSourcing.hostdiscovery import site_settings
 from DataEntry.solr import solrsearch, solr_search_query
@@ -226,4 +226,9 @@ def geosearch(request):
 
 def getsize(request):
     results = get_image_size(request)
+    return HttpResponse(results, content_type='text/plain')
+
+
+def getsize2(request, site_identifier):
+    results = get_image_size2(request)
     return HttpResponse(results, content_type='text/plain')
