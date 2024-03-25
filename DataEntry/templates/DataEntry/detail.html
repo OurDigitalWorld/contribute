@@ -1,6 +1,6 @@
 {% extends "DataEntry/header_block.html" %}
 
-{% load staticfiles %}
+{% load static %}
 {% block page_title %}
    {{ record.title }}
 {% endblock %}
@@ -26,6 +26,9 @@
                     <div class="pictureBlock">
                         <img src="/media/project/{{ file_object.file_name }}" alt="{{ record.title }}" />
                    </div>
+                    {% if do_rotate %}
+                <button id="rotate_link">Rotate image</button>
+                     {% endif %}
                 {% elif file_object.record_object_category_id == 2 %}
                     <button id="view_full">{{ site_settings.ConLabelSeeFull }}</button>
                     <div id="modal_full" >
@@ -55,7 +58,7 @@
                 {% endfor %}
             </dl>
             <div id="geoLatLng" class="hide-text"> {% for geo in geodata %}{{ geo.latitude }}|{{ geo.longitude }}|{{ geo.name }};{% endfor %}</div>
-            <div id="map_canvas" style="width: 400px; height: 300px"></div>
+            <div id="map_canvas" style="width: 100%; height: 300px"></div>
             <br/>
         {% endif %}
             <div class="label">{{ site_settings.ConLabelContributor }}</div>

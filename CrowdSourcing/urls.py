@@ -1,28 +1,37 @@
-from django.conf.urls import patterns, include, url
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.urls import re_path
 
-from tastypie.api import Api
-
-from CrowdSourcing.hostdiscovery import site_host
-import DataEntry
-from DataEntry.api import RecordResource, RecordObjectResource, GeographyResource, RightsResource
 from DataEntry import views
-
-
-v1_api = Api(api_name='v1')
-v1_api.register(RecordResource())
-v1_api.register(RecordObjectResource())
-v1_api.register(GeographyResource())
-v1_api.register(RightsResource())
 
 admin.autodiscover()
 
-urlpatterns = patterns('',
-                       url(r'^(?P<site_identifier>\w+)/contribute/',
-                           include('DataEntry.urls', namespace="DataEntry")),
-                       url(r'geosearch$', DataEntry.views.geosearch, name='geosearch'),
-                       url(r'^api/', include(v1_api.urls)),
-                       url(r'^admin/', include(admin.site.urls)),
-                       ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns = [
+       re_path(r'^$', views.upload),
+       # url(r'^api/', include(v1_api.urls)),
+       re_path(r'^admin/', admin.site.urls),
+       # ex: /contribute/5/update/
+       re_path(r'^(?P<record_id>\d+)/update/$', views.update),
+       # ex: /contribute/5/delete/
+       re_path(r'^(?P<record_id>\d+)/delete/$', views.delete),
+       # ex: /contribute/5/confirm/
+       re_path(r'^(?P<record_id>\d+)/confirm/$', views.confirm),
+       # ex: /contribute/5/[optional slug]/
+       re_path(r'^(?P<record_id>\d+)/(?P<slug>[\w-]+)/$', views.detail),
+       re_path(r'^(?P<record_id>\d+)/$', views.detail),
+       # ex: /contribute/5/[optional slug]/full
+       re_path(r'^(?P<record_id>\d+)/[\w-]+/full/$', views.full),
+       re_path(r'^(?P<record_id>\d+)/full/$', views.full),
+       # ex: /contribute/upload/
+       re_path(r'^/upload/$', views.upload),
+       # ex: /contribute/upload/
+       re_path(r'^/rotate/(?P<record_id>\d+)/(?P<orientation>\d+)$', views.rotate),
+       # ex: /contribute/geosearch/
+       re_path(r'^conf/(?P<vita_set>\w+)/(?P<vita_site_id>\d+)/$', views.configure),
+       # ex: /contribute/geosearch/
+       re_path(r'^geosearch$', views.geosearch),
+        # ex: /contribute/getsize
+       re_path(r'^getsize$', views.getsize),
+       re_path(r'^copyfile$', views.copyfile),
+       ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

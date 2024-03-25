@@ -2,7 +2,7 @@
 <html lang="{{ site_settings.SiteLanguage }}">
 <head>
 
-    {% load staticfiles %}
+    {% load static %}
      {% block header %}{% endblock %}
 </head>
 <body{% if geodata %} onload="gMapInitialize()"{% elif gMap %} onload="initializeGeography()"{% endif%}  >

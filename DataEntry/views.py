@@ -1,16 +1,22 @@
-from django.shortcuts import render, get_object_or_404, render_to_response
-from django.http import HttpResponseRedirect, HttpResponse
-from django.utils.http import urlquote
 import os.path
 import urllib.request
-from DataEntry.forms import UploadForm
-from DataEntry.models import Record, RecordObject, Geography
-from DataEntry.image import process_image, get_image_size, get_image_size2
-from DataEntry.text import process_text
+from time import sleep
+from django.shortcuts import render, get_object_or_404, render
+from django.http import HttpResponseRedirect, HttpResponse
+from django.conf import settings
+from django.utils.http import urlquote
 from CrowdSourcing.hostdiscovery import site_settings
-from DataEntry.solr import solrsearch, solr_search_query
-from DataEntry.record_object_utilities import delete_record
+from CrowdSourcing.customlog import log_request
+from DataEntry.forms import UploadForm
+from DataEntry.models import Record, RecordObject, Geography, site_contribute_geography
+from DataEntry.image import process_image, get_image_size, get_image_size2, rotate_image, copy_file
+from DataEntry.text import process_text
+from DataEntry.audio import process_audio
+from DataEntry.video import process_video
+from DataEntry.solr import solr_search_query, geosolrsearch
+from DataEntry.record_object_utilities import delete_record, file_ext
 from DataEntry.configure import configure_site
+
 
 # ==================================
 
@@ -27,15 +33,13 @@ def index(request):
 def detail(request, site_identifier, record_id, slug=''):
     """
     @param request:
-    @param site_identifier:
     @param record_id:
     @param slug:
     @return:
 
-    Render a detail version of all the fields that were contributed.
-    Ask for confirmation, deletion or further editing
-    If slug == 'edit', then pass the variables to an editable form
-    which returns to the main rendering for confirmation again.
+    Render a detail version of all the fields that were contributed asking for confirmation, deletion or further editing
+    If slug == 'edit', then pass the variables to an editable form which returns to the main rendering for confirmation again.
+    If slug == 'redit', then pass to edit with a flag for 'this has just been rotated'.
     """
 
     geodata = {}
@@ -44,32 +48,60 @@ def detail(request, site_identifier, record_id, slug=''):
     record = get_object_or_404(Record, pk=record_id)
     geography = Geography.objects.filter(record_id=record_id)
     geoids = ""
+    geo_list = []
     for geo in geography:
         if geoids == "":
             geoids = "id:%s" % (str(geo.geonameid))
         else:
             geoids += " OR id:%s" % (str(geo.geonameid))
         geoids = "%s" % geoids
-        geodata = solr_search_query(geoids, 'geonames')
-        print(geodata)
+        geo_list.append(str(geo.geonameid))
+
+    if slug == 'edit' or slug == 'redit':
+        geo_checklist = site_contribute_geography.objects.using('vita').filter(site_id=site_values['VitaSiteID'])
+        for geo in geo_checklist:
+            if geoids == "":
+                geoids = "id:%s" % (str(geo.geonameid))
+            else:
+                geoids += " OR id:%s" % (str(geo.geonameid))
+            geoids = "%s" % geoids
+    geodata = solr_search_query(geoids, 'geonames')
+    rotate_image = ''
+    if slug == 'edit':
+        rotate_image = 'offer'
+    elif slug == 'redit':
+        rotate_image = 'undo'
+    # print('rotate: ', rotate)
+    #log_request('64:geodata:', geodata)
     try:
         recordobject = RecordObject.objects.filter(record_id=record_id).order_by('record_object_category_id')
     except RecordObject.DoesNotExist:
         recordobject = ''
+        google_map_canvas = '300'
+    do_rotate = True
+    for file_object in recordobject:
+        file_role = int(file_object.record_object_category_id)
+        if file_role > 6:
+            do_rotate = False
+    # TODO: break up context elements between shared and unique to either edit or detail
     context = {
         'site_settings': site_values,
-        'site_identifier': site_identifier,
         'record': record,
         'recordobject': recordobject,
         'full': False,
         'geodata': geodata,
         'gMap': True,
+        'geo_check': True,
+        'geo_list': geo_list,
         'showProvince': True,
         'jQuery': True,
         'delete_dialog': True,
         'message': message,
+        'rotate': rotate_image,
+        'do_rotate': do_rotate,
+        'site_identifier': site_identifier,
     }
-    if slug == 'edit':
+    if slug == 'edit' or slug == 'redit':
         return render(request, 'DataEntry/edit.html', context)
     else:
         return render(request, 'DataEntry/detail.html', context)
@@ -82,23 +114,37 @@ def full(request, site_identifier, record_id):
         recordobject = RecordObject.objects.filter(record_id=record_id, record_object_category_id=2)
         context = {
             'site_settings': site_values,
-            'site_identifier': site_identifier,
             'record': record,
             'recordobject': recordobject,
+            'site_identifier': site_identifier,
             'full': True}
         return render(request, 'DataEntry/detail.html', context)
     except RecordObject.DoesNotExist:
-        target = "/%s/contribute/%s/%s/" % (site_identifier, record_id, record.slug)
+        target = "/%s/%s/%s/" % (site_identifier, record_id, record.slug)
         return HttpResponseRedirect(target)
 
 
 def upload(request, site_identifier):
+    geodata = {}
+    geoids = ""
     site_values = site_settings(request)
     site_id = site_values['site_id']
     display_public = site_values['ConPublicDisplay']
+    plan_audio = site_values['ConPlanAudio']
+    plan_video = site_values['ConPlanVideo']
     vita_url = request.GET.get('u', '')
     vita_thumb_url = request.GET.get('t', '')
-    upload_action = '/%s/contribute/upload/' % site_identifier
+    allowed_extensions = []
+    image_extensions = settings.IMAGE_EXTENSIONS
+    text_extensions = settings.TEXT_EXTENSIONS
+    audio_extensions = settings.AUDIO_EXTENSIONS
+    video_extensions = settings.VIDEO_EXTENSIONS
+    allowed_extensions = image_extensions + text_extensions
+    if plan_audio == '1':
+        allowed_extensions += audio_extensions
+    if plan_video == '1':
+        allowed_extensions += video_extensions
+    upload_action = '/%s/upload/' % site_identifier
     message = request.GET.get('m', '')
     if message == 'delete':
         message = site_values['ConLabelDeleteConfirm']
@@ -107,58 +153,87 @@ def upload(request, site_identifier):
             message = site_values['ConPublicMessage2']
         else:
             message = site_values['ConNonPublicMessage']
+    if site_values['ConSaveOriginal']:
+        save_original = site_values['ConSaveOriginal']
+    else:
+        save_original = '0'
+    geo_checklist = site_contribute_geography.objects.using('vita').filter(site_id=site_values['VitaSiteID'])
+    for geo in geo_checklist:
+        if geoids == "":
+            geoids = "id:%s" % (str(geo.geonameid))
+        else:
+            geoids += " OR id:%s" % (str(geo.geonameid))
+        geoids = "%s" % geoids
+        # log_request("127 geoids", geoids)
+    if geoids:
+        geodata = solr_search_query(geoids, 'geonames')
+    # for geo in geodata:
+    #    log_request("id", geo)
+    # log_request("128 geodata", geodata)
+
     new_contribution_pk = 0
-    if request.method == 'POST':
-        # If the form has been submitted...
-        turing_subj = request.POST.get('subj', '')
-        # on the assumption that the comment form spammer will fill out the subj form
+    if request.method == 'POST':  # If the form has been submitted...
+        turing_subj = request.POST.get('subj',
+                                       '')  # on the assumption that the comment form spammer will fill out the subj form
         if len(turing_subj) < 1:
             turing_test_passed = True
         else:
             turing_test_passed = False
     else:
-        turing_test_passed = False
-        # not strictly true, but the point is to present (or re-present an empty form)
-    if turing_test_passed:
+        turing_test_passed = False  # not strictly true, but the point is to present (or re-present an empty form)
+    if (turing_test_passed):
         if 'image_file' in request.FILES:
-            form = UploadForm(request.POST, empty_permitted=True)
-            # A form bound to the POST data
-            if form.is_valid():
-                # All validation rules pass
+            # print("Went via RequestFiles")
+            # print(request.POST)
+            # form = UploadForm(site_id, new_contribution_pk, request.POST, request.FILES, empty_permitted=True)  # A form bound to the POST data
+            form = UploadForm(request.POST)  # A form bound to the POST data
+            # print("Back from RequestFiles UploadForm")
+            if form.is_valid():  # All validation rules pass
+                # TODO:  refactor the next three lines which are repeated below
+                # print("Save please")
                 new_contribution_pk = form.save(request, site_id, new_contribution_pk)
+                # print("Back from RequestFiles UploadForm")
                 image_file_name = get_object_or_404(Record, pk=new_contribution_pk).image_file.name
                 # process the  uploaded file
-                file_extension = os.path.splitext(image_file_name)[1][1:]
-                if file_extension.lower() in ['bmp', 'gif', 'jpg', 'jpeg', 'png', 'tif', 'tiff']:
-                    process_image(new_contribution_pk, image_file_name)
-                elif file_extension.lower() in ['txt', 'pdf', 'doc', 'docx']:
+                file_extension = file_ext(image_file_name)
+                # print(file_extension)
+                if file_extension in settings.IMAGE_EXTENSIONS:
+                    process_image(new_contribution_pk, image_file_name, save_original, '')
+                elif file_extension in settings.TEXT_EXTENSIONS:
                     process_text(new_contribution_pk, image_file_name)
-                target = "/%s/contribute/%s/" % (site_identifier, new_contribution_pk)
-                # Redirect after POST
-                return HttpResponseRedirect(target)
+                elif file_extension in settings.AUDIO_EXTENSIONS:
+                    process_audio(new_contribution_pk, image_file_name)
+                elif file_extension in video_extensions:
+                    process_video(new_contribution_pk, image_file_name)
+                target = "/%s/%s/" % (site_identifier, new_contribution_pk)
+                return HttpResponseRedirect(target)  # Redirect after POST
         else:
+            # print("Went via RequestPOST")
             form = UploadForm(request.POST, empty_permitted=True)
-            # All validation rules pass
-            if form.is_valid():
+            # print("Back from RequestPOST UploadForm")
+            if form.is_valid():  # All validation rules pass
+                # print("Form was valid")
                 new_contribution_pk = form.save(request, site_id, 0)
-                target = "/%s/contribute/%s/" % (site_identifier, new_contribution_pk)
-                # Redirect after POST
-                return HttpResponseRedirect(target)
-        return render_to_response('DataEntry/form_errors.html', {'form': form})
+                target = "/%s/%s/" % (site_identifier, new_contribution_pk)
+                return HttpResponseRedirect(target)  # Redirect after POST
+        return render('DataEntry/form_errors.html', {'form': form})
     else:
         form = UploadForm()  # An unbound form
     context = {
         'site_settings': site_values,
-        'site_identifier': site_identifier,
         'form': form,
         'jQuery': True,
         'gMap': True,
+        'geo_check': False,
+        'geodata': geodata,
         'showProvince': True,
         'vita_url': vita_url,
         'vita_thumb_url': vita_thumb_url,
         'message': message,
         'upload': True,
         'upload_action': upload_action,
+        'allowed_extensions': allowed_extensions,
+        'site_identifier': site_identifier,
     }
     return render(request, 'DataEntry/upload.html', context)
 
@@ -171,17 +246,20 @@ def update(request, site_identifier, record_id):
     if request.method == 'POST':  # If the form has been submitted...
         form = UploadForm(request.POST, empty_permitted=True, instance=record)
         if form.is_valid():  # All validation rules pass
+            #    print("Form was valid")
             form.save(request, site_id, record_id, instance=record)
-            target = "/%s/contribute/%s/" % (site_identifier, record_id)
+            target = "/%s/%s/" % (site_identifier, record_id)
             return HttpResponseRedirect(target)  # Redirect after POST
-        return render_to_response('DataEntry/form_errors.html', {'form': form})
+        return render(request, 'DataEntry/form_errors.html', {'form': form})
 
 
 def delete(request, site_identifier, record_id):
+    # TODO:  in dev environment this is throwing "BrokenPipeError: [Errno 32] Broken pipe" errors
+    # TODO: probably because the deletion of the file objects is lagging behind execution
     are_we_done = delete_record(record_id)
     # redirect to /contribute/upload
     if are_we_done == 'done':
-        redirect_url = '/%s/contribute/upload?m=delete' % site_identifier
+        redirect_url = '/%s/upload?m=delete' % site_identifier
         return HttpResponseRedirect(redirect_url)
 
 
@@ -191,10 +269,14 @@ def confirm(request, site_identifier, record_id):
     group_id = site_values['ConGroupID']
     confirm_error = site_values['ConLabelConfirmError']
     data_callback_url = "%sUpdateContribute.asp?id=%s&gid=%s" % (data_callback_base, record_id, group_id)
+    # print(data_callback_url)
     response = urllib.request.urlopen(data_callback_url)
     data = response.read()
     f = data.decode('utf-8')
-    if f[:4] == 'http':
+    # print(f)
+    sleep(3)
+    if (f[:4] == 'http'):
+        # if (f):
         vita_url = ''
         vita_thumb_url = ''
         urls = f.split('|')
@@ -203,25 +285,31 @@ def confirm(request, site_identifier, record_id):
         if urls[1]:
             vita_thumb_url = urls[1]
         are_we_done = delete_record(record_id)
+        # are_we_done = 'nope'
         if are_we_done == 'done':
-            redirect = '/%s/contribute/upload?u=%s&t=%s&m=confirm' % (site_identifier, vita_url, vita_thumb_url)
+            redirect = '/%s/upload?u=%s&t=%s&m=confirm' % (site_identifier, vita_url, vita_thumb_url)
             return HttpResponseRedirect(redirect)
         else:
-            return render_to_response('DataEntry/test.html', {'results': f})
+            return render(request, 'DataEntry/test.html', {'results': f})
     else:
         message = urlquote(confirm_error)
-        redirect_url = '/%s/contribute/%s?m=%s' % (site_identifier, record_id, message)
+        redirect_url = '/%s/%s?m=%s' % (site_identifier, record_id, message)
         return HttpResponseRedirect(redirect_url)
 
 
 def configure(request, site_identifier, vita_set, vita_site_id):
+    # print('db_identifier: ', vita_set)
+    # print('vita_site_id: ', vita_site_id)
     results = configure_site(vita_set, vita_site_id)
-    return render_to_response('DataEntry/test.html', {'results': results})
+    # results="did something, maybe"
+    return render(request, 'DataEntry/test.html', {'results': results})
 
 
 def geosearch(request):
-    results = solrsearch(request, 'geonames')
-    return render_to_response('DataEntry/geo.html', {'results': results})
+    # TODO: configure scoping of places by country and optionally provinces/admin1
+    results = geosolrsearch(request)
+    # return render(request, 'DataEntry/geo.html', {'results': results})
+    return HttpResponse(results, content_type='text/plain')
 
 
 def getsize(request):
@@ -229,6 +317,21 @@ def getsize(request):
     return HttpResponse(results, content_type='text/plain')
 
 
-def getsize2(request, site_identifier):
+def getsize2(request):
     results = get_image_size2(request)
+    return HttpResponse(results, content_type='text/plain')
+
+
+def rotate(request, site_identifier, record_id, orientation):
+    rotate_image(record_id, orientation)
+    if orientation == '1':
+        redirect_url = '/%s/%s/edit' % (site_identifier, record_id)
+    else:
+        redirect_url = '/%s/%s/redit' % (site_identifier, record_id)
+    # print('redirect_url: ', redirect_url)
+    return HttpResponseRedirect(redirect_url)
+
+
+def copyfile(request):
+    results = copy_file(request)
     return HttpResponse(results, content_type='text/plain')

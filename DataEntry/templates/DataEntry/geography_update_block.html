@@ -3,8 +3,9 @@
     <dl id="geographyChecklist">
         {% for geo in geodata %}
            <dt>
-            <input id="id_location_{{ geo.id }}" type="checkbox" name="geonameid" value="{{ geo.id }}" checked="checked" />
-           <label for="id_location_{{ geo.id }}">{{ geo.name }}{% if geo.admin1text %}, {{ geo.admin1text }}{% endif %}{% if geo.countrytext %}, {{ geo.countrytext }}{% endif %}
+<input id="id_location_{{ geo.id }}" type="checkbox" name="geonameid" value="{{ geo.id }}"
+       {% if geo_check %}{% if geo.id in geo_list%}checked="checked"  {% endif %}{% endif %}/>
+           <label for="id_location_{{ geo.id }}">{{ geo.name }}{% if geo.admin1_text_ss %}, {{ geo.admin1_text_ss }}{% endif %}{% if geo.country_text_ss %}, {{ geo.country_text_ss }}{% endif %}
                </label>
             </dt>
             <dd>{{ geo.latitude }}, {{ geo.longitude }}</dd>
@@ -14,8 +15,23 @@
     <input type="hidden" id="pr" name="pr" value="{{ constraint_province }}" />
     <input type="hidden" id="colab" name="colab" value="{{ constraint_country_label }}" />
 
-
-    <div id="geoLatLng" class="hide-text"> {% for geo in geodata %}{{ geo.latitude }}|{{ geo.longitude }}|{{ geo.name }};{% endfor %}</div>
+    {% if geo_check %}
+        {% if geo_list %}
+            <div id="geoLatLng" class="hide-text">
+            {% for geo in geodata %}
+                {% if geo.id in geo_list%}
+                    {{ geo.latitude }}|{{ geo.longitude }}|{{ geo.name }};
+                {% endif %}
+            {% endfor %}
+            </div>
+        {% endif %}
+    {% else %}
+        <div id="geoLatLng" class="hide-text">
+        {% for geo in geodata %}
+            {{ geo.latitude }}|{{ geo.longitude }}|{{ geo.name }};
+        {% endfor %}
+        </div>
+    {% endif %}
     <div class="alert">{{ site_settings.ConLabelConstraints }}
         <div id="noConstraint" class="inline"></div>
         <div id="provinceConstraint" class="inline">{% if constraint_province %}{{ constraint_province }}, {% endif %}</div>

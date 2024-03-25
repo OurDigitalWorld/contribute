@@ -5,13 +5,14 @@
 {% block header %}
     <title>{% block page_title %}{% endblock %}: {{ site_settings.SiteName }}</title>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="{% static "css/base.css" %}" />
     <link rel="stylesheet" type="text/css" href="{% static "css/widgets.css" %}" />
     <link rel="stylesheet" type="text/css" href="{% static "css/forms.css" %}" />
     <link rel="stylesheet" type="text/css" href="{% static "css/changelists.css" %}" />
     <link rel="stylesheet" type="text/css" href="{% static "css/normalize.css" %}" />
     <link rel="stylesheet" type="text/css" href="{{ site_settings.CSS }}" />
-    <link rel="stylesheet" type="text/css" href="{% static "css/contribute.css" %}" />
+    <link rel="stylesheet" type="text/css" href="{% static "css/contribute61.css" %}" />
 
     {# set up jQuery for autocompletes and other purposes #}
     {# TODO: be more specific about which files need to be loaded?#}
@@ -38,7 +39,7 @@
 			var myOptions = {
 			  zoom: 0,
 			  center: new google.maps.LatLng(0,0),
-			  mapTypeId: google.maps.MapTypeId.SATELLITE
+			  mapTypeId: google.maps.MapTypeId.roadmap
 			};
 			//this may have to move down
 			var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
@@ -158,12 +159,15 @@
     {% endif %}
     {% if delete_dialog %}
 
-       <script src="{% static "js/jquery.cookie.js" %}" type="text/javascript"></script>
+       <script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
        <script type="text/javascript">
         $(function() {
-            var csrftoken = $.cookie('csrftoken');
+            var csrftoken = Cookies.get('csrftoken');
 
             $( "#edit_link" ).click(function() {
+                window.location = '/{{ site_identifier }}/contribute/{{ record.id }}/edit'
+            });
+            $( "#rotate_link" ).click(function() {
                 window.location = '/{{ site_identifier }}/contribute/{{ record.id }}/edit'
             });
             $( "#submit_link" ).click(function() {
@@ -256,5 +260,27 @@
            });
 		});
     </script>
+	<script>
+	function validate(file) {
+    var ext = file.split(".");
+    ext = ext[ext.length-1].toLowerCase();
+    var arrayExtensions = {{ allowed_extensions|safe }};
+
+    if (arrayExtensions.lastIndexOf(ext) == -1) {
+
+        {% if site_settings.SiteLanguage == 'en' %}
+        var warning = "The file you are uploading has a file extension of : " +
+            ext +"\nThis file format is not supported.\nAcceptable file formats are: " +
+            {{ allowed_extensions|safe }};
+        {% elif site_settings.SiteLanguage == 'fr' %}
+        var warning = "Le fichier que vous téléchargez a une extension de : " +
+            ext +"\nCe format n'est pas pris en charge.\nLes formats de fichiers acceptés sont: " +
+            {{ allowed_extensions|safe }};
+        {% endif %}
+        alert(warning);
+        $("#id_image_file").val("");
+    }
+}
+	</script>
 {% endblock %}
 

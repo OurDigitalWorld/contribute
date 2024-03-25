@@ -1,6 +1,6 @@
 {% extends "DataEntry/header_block.html" %}
 
-{% load staticfiles %}
+{% load static %}
 {% block page_title %}
    {{ record.title }}
 {% endblock %}
@@ -34,6 +34,15 @@
                 <input id="id_title" type="text" name="title"  value="{% if record.title %}{{ record.title }}{% endif %}"  />
                 </div>
             </div>
+            {% for file_object in recordobject %}
+                {% if file_object.record_object_category_id == 1  %}
+             <div class="step_help">
+            {% include 'DataEntry/help/rotate_image_block.html' %}
+             </div>
+                {% endif %}
+            {% endfor %}
+        </fieldset>
+        <fieldset id="edit1a">
             <div class="fieldContent">
                 <label for="id_description">{{ site_settings.ConLabelDescription }}</label>
                 <div id="description">
@@ -54,7 +63,7 @@
             <div class="fieldContent">
                 <div class="label">{{ site_settings.ConLabelLocation }}</div>
                 {% include 'DataEntry/geography_update_block.html' %}
-                <div id="map_canvas" style="width: 400px; height: 300px"></div>
+                <div id="map_canvas" style="width: 100%; height: 300px"></div>
             </div>
              <div class="step_help">
                 {% include 'DataEntry/help/help_geography.html' %}

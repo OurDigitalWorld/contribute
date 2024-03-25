@@ -22,7 +22,7 @@ class Record(models.Model):
     contributor = models.CharField(max_length=256, null=True, blank=True)
     contributor_email = models.EmailField(null=True, blank=True)
     contributor_name_permission = models.BooleanField(default=False)
-    rights = models.ForeignKey(Right, null=True, blank=True)
+    rights = models.ForeignKey(Right, null=True, blank=True, on_delete=models.DO_NOTHING)
     date_added = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     image_file = models.FileField(max_length=256, upload_to='project/', null=True, blank=True)
@@ -50,7 +50,7 @@ class Record(models.Model):
 
 class RecordObject(models.Model):
     id = models.AutoField(primary_key=True)
-    record = models.ForeignKey(Record, null=False)
+    record = models.ForeignKey(Record, null=False, on_delete=models.DO_NOTHING)
     record_object_category_id = models.IntegerField()
     file_name = models.CharField(max_length=256)
     thumbnail = models.CharField(max_length=256, null=True)
@@ -78,15 +78,25 @@ class Site(models.Model):
 
 class SiteSetup(models.Model):
     id = models.AutoField(primary_key=True)
-    site = models.ForeignKey(Site, null=False)
+    site = models.ForeignKey(Site, null=False, on_delete=models.DO_NOTHING)
     afield = models.CharField(max_length=50, null=False)
     avalue = models.TextField(null=True)
 
 
 class Geography(models.Model):
-    record = models.ForeignKey(Record)
+    record = models.ForeignKey(Record, on_delete=models.DO_NOTHING)
     geonameid = models.BigIntegerField(null=True, blank=True)
     name = models.CharField(max_length=256, null=True, blank=True)
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
     relationship = models.CharField(max_length=20, null=True, blank=True)
+
+
+class site_contribute_geography(models.Model):
+    geonameid = models.IntegerField(primary_key=False)
+    name = models.CharField(max_length=200, blank=True, null=True)
+    site_id = models.IntegerField(null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'site_contribute_geography'
