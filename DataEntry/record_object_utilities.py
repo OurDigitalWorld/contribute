@@ -36,17 +36,25 @@ def add_record_object(record_id, record_object_category_id, target_file, source_
     object_width = 0
     object_height = 0
     # log_request('36: Target File:', target_file)
+    # print('record_object_category_id: ', record_object_category_id)
+    # print('fulltext: ', fulltext)
     file_name = target_file.replace(settings.PROJECT_MEDIA_ROOT, '')
     # log_request('38: File Name:', file_name)
     original_file_name = source_file.replace(settings.PROJECT_MEDIA_ROOT, '')
     if record_object_category_id == 1 \
             or record_object_category_id == 2 \
             or record_object_category_id == 3 \
+            or record_object_category_id == 4 \
             or record_object_category_id == 0:
         img = Image.open(target_file)
         object_width = img.size[0]
         object_height = img.size[1]
         file_type = img.format
+    # elif record_object_category_id == 4:
+    #    img = Image.open(source_file)
+    #    object_width = img.size[0]
+    #    object_height = img.size[1]
+    #    file_type = img.format
     file_size = os.path.getsize(target_file)
     if not file_type:
         # if not an image use the file extension
@@ -97,6 +105,7 @@ def delete_record_objects(record_id):
     if file_name:
         upload_path = "%s/" % settings.MEDIA_ROOT  # because MEDIA_ROOT is slashless
         delete_file(file_name, upload_path)
+    RecordObject.objects.filter(record_id=record_id).delete()
     return "done"
 
 

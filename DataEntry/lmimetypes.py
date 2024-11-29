@@ -2,6 +2,7 @@ __author__ = 'walter'
 
 #import mimetypes
 
+
 def mime(fe):
     mime_types = {
         'txt': 'text/plain',
@@ -15,6 +16,7 @@ def mime(fe):
         'sldx': 'application/vnd.openxmlformats-officedocument.presentationml.slide',
         'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
         'dotx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.template',
+        'rtf': 'text/rtf',
         'xlam': 'application/vnd.ms-excel.addin.macroEnabled.12'
     }
 

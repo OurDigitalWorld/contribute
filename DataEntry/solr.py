@@ -1,13 +1,11 @@
 __author__ = 'walter'
 
-# import pysolr
+import pysolr
 import requests
 from CrowdSourcing.customlog import log_request
 from django.conf import settings
-SOLR_INDEX_URL = "http://localhost:8983/solr/"
-GEO_URL = "http://localhost:8983/solr/geonames1/query?"
+from contribute.settings import SOLR_INDEX_URL, GEO_URL
 URL_EXTENDED_FIELD_LIST = '&fl=id,name,latitude,longitude,feature_text_ss,country_text_ss,admin1_text_ss,country_code'
-
 
 
 def geosolrsearch(request):
@@ -33,20 +31,20 @@ def geosolrsearch(request):
     if province_state:
         query = '%s+AND+admin1_text_ss:"%s"' % (query, province_state)
     url = '%sq=%s&rows=200&sort=priority_i+asc,name+asc&wt=json%s' % (GEO_URL, query, URL_EXTENDED_FIELD_LIST)
-    # log_request('url (GN:84: ', url)
+    # print('url (GN:84: ', url)
     r = requests.get(url)
     # log_request('status code (GN:86: ', r.status_code)
     if r.status_code == 200:
         # log_request('r (GN:88: ', r)
         solr_response = r.json()
-        # log_request('solr_response (GN:90: ', solr_response)
+        # print('solr_response (GN:90: ', solr_response)
         number_found = solr_response['response']['numFound']
         if int(number_found) > 0:
             results =solr_response['response']['docs']
-            log_request('results: ', results)
+            # log_request('results: ', results)
             for place in results:
                 place_string = ''
-                id = place['id']
+                place_id = place['id']
                 name = place['name']
                 latitude = place['latitude']
                 longitude = place['longitude']
@@ -54,21 +52,21 @@ def geosolrsearch(request):
                 country_text = place['country_text_ss'][0]
                 country_code = place['country_code'][0]
                 feature_text = place['feature_text_ss'][0]
-                place_string = '{"id":"%s", "term":"%s"' % (id, name)
+                place_string = '{}'.format(name)
                 if admin1:
                     place_string += ', %s' % admin1
                 if country:
                     place_string += ', %s' % country_text
-                place_string += ' (%s: %s, %s)", "latitude":"%s","longitude":"%s",' % \
-                                (feature_text, latitude, longitude, latitude, longitude)
-                place_string += '"name": "%s"}' % name
+                place_string += ' (%s: %s, %s)' % \
+                                (feature_text, latitude, longitude)
                 # print(place_string)
+                place_string = '{ label: "%s", value: "%s" }' % (name, place_id)
                 if term_string:
                     term_string += ', '
                 term_string += place_string
         # print(term_string)
-        final_results = '{"terms":[%s]}' % term_string
-        print(final_results)
+        final_results = '{"terms":[ %s ]}' % term_string
+        # print(final_results)
     return final_results
 
 

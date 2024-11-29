@@ -5,6 +5,7 @@ from django.template.defaultfilters import slugify
 
 
 class Right(models.Model):
+    id = models.BigAutoField(primary_key=True)
     cccode = models.CharField('Creative Commons code', max_length=10)
     cc_label = models.CharField(null=True, max_length=30)
     cc_description = models.TextField(null=True)
@@ -15,7 +16,7 @@ class Right(models.Model):
 
 
 class Record(models.Model):
-    id = models.AutoField(primary_key=True)
+    id = models.BigAutoField(primary_key=True)
     agency_id = models.IntegerField(null=True)
     title = models.CharField(max_length=256)
     description = models.TextField(null=True, blank=True)
@@ -38,8 +39,10 @@ class Record(models.Model):
     def thumbnail(self):
         return RecordObject(record=self, record_object_category_id=0).file_name
 
+    @property
     def filename(self):
-        return os.path.basename(self.image_file.name)
+        # return os.path.basename(self.image_file.name)
+        return self.image_file.path
 
     def save(self, *args, **kwargs):
         if not self.id:
@@ -49,7 +52,7 @@ class Record(models.Model):
 
 
 class RecordObject(models.Model):
-    id = models.AutoField(primary_key=True)
+    id = models.BigAutoField(primary_key=True)
     record = models.ForeignKey(Record, null=False, on_delete=models.DO_NOTHING)
     record_object_category_id = models.IntegerField()
     file_name = models.CharField(max_length=256)
@@ -66,7 +69,7 @@ class RecordObject(models.Model):
 
 
 class Site(models.Model):
-    id = models.AutoField(primary_key=True)
+    id = models.BigAutoField(primary_key=True)
     site_name = models.CharField(max_length=256, null=False)
     site_url = models.CharField(max_length=256, null=False)
     date_added = models.DateTimeField(auto_now_add=True)
@@ -77,13 +80,14 @@ class Site(models.Model):
 
 
 class SiteSetup(models.Model):
-    id = models.AutoField(primary_key=True)
+    id = models.BigAutoField(primary_key=True)
     site = models.ForeignKey(Site, null=False, on_delete=models.DO_NOTHING)
     afield = models.CharField(max_length=50, null=False)
     avalue = models.TextField(null=True)
 
 
 class Geography(models.Model):
+    id = models.BigAutoField(primary_key=True)
     record = models.ForeignKey(Record, on_delete=models.DO_NOTHING)
     geonameid = models.BigIntegerField(null=True, blank=True)
     name = models.CharField(max_length=256, null=True, blank=True)
@@ -93,6 +97,7 @@ class Geography(models.Model):
 
 
 class site_contribute_geography(models.Model):
+    id = models.BigAutoField(primary_key=True)
     geonameid = models.IntegerField(primary_key=False)
     name = models.CharField(max_length=200, blank=True, null=True)
     site_id = models.IntegerField(null=True)

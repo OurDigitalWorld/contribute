@@ -1,11 +1,13 @@
 __author__ = 'walter'
 from django import forms
+from django.utils.html import strip_tags
 from DataEntry.models import Record, Geography
 
 
 class UploadForm(forms.ModelForm):
     title = forms.CharField(max_length=256)
-    description = forms.CharField(widget=forms.Textarea(),  required=False)
+    description = (forms.CharField
+                   (widget=forms.Textarea(),  required=False))
     full_text = forms.CharField(widget=forms.Textarea(),  required=False)
     contributor = forms.CharField(max_length=256)
     contributor_email = forms.EmailField(required=False)
@@ -21,8 +23,8 @@ class UploadForm(forms.ModelForm):
         post = super(UploadForm, self).save(commit=False)
         if record_id > 0:
             post.record_id = record_id
-        post.title = request.POST.get('title')
-        post.description = request.POST.get('description')
+        post.title = scrub_html(request.POST.get('title'))
+        post.description = clean_content(request.POST.get('description'))
         post.full_text = request.POST.get('full_text')
         post.contributor = request.POST.get('contributor')
         post.contributor_email = request.POST.get('contributor_email')
@@ -74,3 +76,16 @@ class UploadForm(forms.ModelForm):
         self.fields['contributor'].widget.attrs['size'] = 80
         self.fields['contributor'].widget.attrs['class'] = 'contributor'
         self.fields['contributor_email'].widget.attrs['size'] = 80
+
+
+def clean_content(content_string):
+    output_string = ''
+    if content_string:
+        output_string = strip_tags(content_string)
+    return output_string
+
+
+def scrub_html(content_string):
+    if content_string:
+        output_string = strip_tags(content_string)
+        return output_string

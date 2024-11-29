@@ -5,12 +5,14 @@ import os
 import warnings
 import subprocess
 from PIL import Image, ImageCms
-_imaging = Image.core
+from pillow_heif import register_heif_opener
 from django.conf import settings
 from CrowdSourcing.customlog import log_request
 from DataEntry.models import RecordObject
 from DataEntry.record_object_utilities import make_file_name, add_record_object, delete_file, file_ext
-from DataEntry.heic import process_heic
+
+_imaging = Image.core
+register_heif_opener()
 
 
 def process_image(record_id, upload_file_name, save_original, orientation):
@@ -22,10 +24,10 @@ def process_image(record_id, upload_file_name, save_original, orientation):
     file_extension = file_ext(source_file)
     # log_request("Image.21 file_extension", file_extension)
     original_file = source_file
-    if file_extension == 'heic':
-        # Convert file to Tiff
-        source_file = process_heic(source_file)
-        intermediate_file = source_file
+    # if file_extension == 'heic':
+    #    # Convert file to Tiff
+    #    source_file = process_heic(source_file)
+    #    intermediate_file = source_file
 
     target_file = make_file_name(record_id, 'thumb')
     make_alternate_image(source_file, target_file, 'thumb', record_id, orientation)
@@ -36,7 +38,7 @@ def process_image(record_id, upload_file_name, save_original, orientation):
     target_file = make_file_name(record_id, 'full')
     skip_original = make_alternate_image(source_file, target_file, 'full', record_id, orientation)
 
-    if skip_original == False:
+    if not skip_original:
         target_file = make_file_name(record_id, 'original')
         make_copy_image(original_file, target_file, record_id)
 
@@ -46,6 +48,9 @@ def process_image(record_id, upload_file_name, save_original, orientation):
 
 
 def make_alternate_image(source_file, target_file, file_type, record_id, orientation):
+    # print('source_file: ', source_file)
+    # print('target_file: ', target_file)
+    # print('orientation: ', orientation)
     orientation = int(orientation)
     do_rotation = False
     if orientation > 1:
@@ -69,26 +74,13 @@ def make_alternate_image(source_file, target_file, file_type, record_id, orienta
         record_object_category_id = settings.FULL_RECORD_OBJECT_CATEGORY
     file_extension = file_ext(source_file)
     img = Image.open(source_file)
-
-    if orientation == 0:
-        try:
-            exif = dict(img._getexif().items())
-            if exif[274]:
-                orientation = exif[274]
-        except:
-            one = 1
-    # print('62:', orientation)
-    if orientation == 3:
-        img = img.rotate(180, expand=True)
-    elif orientation == 6:
-        img = img.rotate(270, expand=True)
-    elif orientation == 8:
-        img = img.rotate(90, expand=True)
+    img = change_orientation(img, orientation)
     if img.mode != "RGB":
         img = img.convert("RGB")
     image_width, image_height = img.size
     if file_type == 'full':
         if file_extension == 'jp2':
+            # print('jp2 rabbit hole')
             target_file = target_file.replace('.jpg', '.jp2')
             target_file = target_file.replace('.jpeg', '.jp2')
             process_with_pillow = '0'
@@ -96,12 +88,14 @@ def make_alternate_image(source_file, target_file, file_type, record_id, orienta
             img.close()
             os.rename(source_file, target_file)
         elif image_width > 1600 or image_height > 1600:
+            # print('large file rabbit hole')
             process_with_pillow = '0'
             # and fire up kdu_compress
             target_file = target_file.replace('.jpg', '.jp2')
             target_file = target_file.replace('.jpeg', '.jp2')
-            jp2_compress(source_file, target_file)
+            jp2_compress(source_file, target_file, orientation)
         elif file_extension == 'png':
+            # print('png rabbit hole')
             target_file = target_file.replace('.jpg', '.png')
             process_with_pillow = '0'
             if do_rotation:
@@ -111,6 +105,7 @@ def make_alternate_image(source_file, target_file, file_type, record_id, orienta
                 os.rename(source_file, target_file)
             skip_original = True
         elif file_extension == 'jpg' or file_extension == 'jpeg':
+            # print('small jpeg rabbit hole')
             process_with_pillow = '0'
             if do_rotation:
                 img.save(target_file, 'JPEG')
@@ -119,7 +114,7 @@ def make_alternate_image(source_file, target_file, file_type, record_id, orienta
                 os.rename(source_file, target_file)
             skip_original = True
     if process_with_pillow == '1':
-        img.thumbnail(file_size, Image.ANTIALIAS)
+        img.thumbnail(file_size, Image.Resampling.LANCZOS)
         img.save(target_file, 'JPEG', quality=file_quality)
     add_record_object(record_id, record_object_category_id, target_file, source_file, '')
     return skip_original
@@ -176,7 +171,7 @@ def mode_convert(image_file_path):
     return img_mode
 
 
-def jp2_compress(source_file, target_file):
+def jp2_compress(source_file, target_file, orientation):
     temp_file_name = target_file.replace('jp2', 'tif')
     problem_file = temp_file_name.replace(settings.MEDIA_ROOT, settings.PROBLEM_PATH)
     kdu = settings.KAKADU_PATH
@@ -188,22 +183,20 @@ def jp2_compress(source_file, target_file):
         img2 = Image.open(source_file)
     # log_request('got to line 122',temp_file_name)
     try:
-        log_request('source ICC:', img2.info.get('icc_profile'))
+        # log_request('source ICC:', img2.info.get('icc_profile'))
         data = list(img2.getdata())
         image_without_exif = Image.new(img2.mode, img2.size)
         image_without_exif.putdata(data)
+
+        image_without_exif = change_orientation(image_without_exif, orientation)
         image_without_exif.save(temp_file_name, 'TIFF', compression=None)
-        # img2.save(temp_file_name, 'TIFF', compression=None, icc_profile=img2.info.get('icc_profile'))
-        img_tiff = Image.open(source_file)
-        # log_request('TIFF ICC:', img_tiff.info.get('icc_profile'))
         try:
             kdu_args = '%s -i %s -o %s -rate 1.0' % (kdu, temp_file_name, target_file)
-            # log_request('file_extension',file_extension.lower())
+            log_request('file_extension',file_extension.lower())
             log_request('kdu_args', kdu_args)
             subprocess.call(kdu_args, shell=True)
             os.remove(temp_file_name)
         except OSError:
-            img_tiff.close()
             os.rename(source_file, problem_file)
     except RuntimeError:
         img2.close()
@@ -229,3 +222,20 @@ def copy_file(request):
     # print("copyplan: ", copy_plan)
     os.popen(copy_plan)
     return 'ok'
+
+
+def change_orientation(img, orientation):
+    if orientation == 0:
+        try:
+            exif = dict(img._getexif().items())
+            if exif[274]:
+                orientation = exif[274]
+        except:
+            one = 1
+    if orientation == 3:
+        img = img.rotate(180, expand=True)
+    elif orientation == 6:
+        img = img.rotate(270, expand=True)
+    elif orientation == 8:
+        img = img.rotate(90, expand=True)
+    return img
