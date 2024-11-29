@@ -1,0 +1,14 @@
+{% load static %}
+
+{% if rotate == 'offer' %}
+<div class="rotate">
+    <div class="rotateUndo"><a href="{{ site_identifier }}rotate/{{ record.id }}/1"><img src="{% static "img/REVERT.gif" %}"  alt="Rotate Left"/></a></div>
+    <div class="rotateLeft"><a href="{{ site_identifier }}rotate/{{ record.id }}/8"><img src="{% static "img/ROTATE90left.gif" %}"  alt="Rotate Left"/></a></div>
+    <div class="rotateRight"><a href="{{ site_identifier }}rotate/{{ record.id }}/6"><img src="{% static "img/ROTATE90right.gif" %}" alt="Rotate Right"/></a></div>
+    <div class="rotate180"><a href="{{ site_identifier }}rotate/{{ record.id }}/3"><img src="{% static "img/FLIP.gif" %}" alt="Rotate 180"/></a></div>
+</div>
+{% endif %}
+
+{% if rotate == 'undo' %}
+    <div class="rotateUndo"><a href="{{ site_identifier }}rotate/{{ record.id }}/1">Undo</a></div>
+{% endif %}
