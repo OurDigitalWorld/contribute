@@ -70,15 +70,18 @@
                   <label for="subj">{{ site_settings.ConTuring }}</label>
                   <input type="text" name="subj" id="subj" />
               </div>
-            {% ifequal site_settings.ConIncludeImage '1'%}
+            {% if site_settings.ConIncludeImage == '1'%}
                 <div id="id_image_upload_block">
                     <label for="id_image_file">{{ site_settings.ConLabelPickFile }}</label>
                     <input id="id_image_file" name="image_file" type="file"  onChange="validate(this.value)" />
                     <br/>
+                    <div class="progress-wrapper">
+                        <div id="progress-bar-file1" class="progress"></div>
+                    </div>
                 </div>
-           {% endifequal %}
+           {% endif %}
                 <label for="id_title">{{ site_settings.ConLabelTitle }}</label><br/>
-                <input class="title" id="id_title" maxlength="256" name="title" type="text" />
+                <input class="title" id="id_title" maxlength="256" name="title" type="text" required />
          </div>
          <div class="step_help">
             {% include 'DataEntry/help/help_file_type.html' %}
@@ -88,16 +91,16 @@
       <fieldset id="step2">
         <div class="fieldContent">
             <div id="step2-description">
-            {% ifequal site_settings.ConIncludeImage '1'%}
+            {% if site_settings.ConIncludeImage == '1'%}
              <label for="id_description">{{ site_settings.ConLabelDescription }}</label><br/>
               <textarea class="textcommon" id="id_description" name="description"></textarea>
-            {% endifequal %}
+            {% endif %}
             </div>
             <div id="step2-fulltext">
-            {% ifequal site_settings.ConIncludeStory '1'%}
+            {% if site_settings.ConIncludeStory == '1'%}
              <label for="id_full_text">{{ site_settings.ConLabelStory }}</label><br/>
               <textarea  class="textcommon" id="id_full_text" name="full_text"></textarea>
-            {% endifequal %}
+            {% endif %}
             </div>
          </div>
          <div class="step_help">
@@ -105,31 +108,18 @@
          </div>
       </fieldset>
 
-      <fieldset id="step3">
-          <div class="fieldContent">
-              <div class="formField">
-                    {% include 'DataEntry/geography_update_block.html' %}
-              </div>
-
-              <div id="map_canvas" style=" width: 100%; height: 300px"> </div>
-          </div>
-         <div class="step_help">
-            {% include 'DataEntry/help/help_geography.html' %}
-         </div>
-       </fieldset>
-
       <fieldset id="step4">
           <div class="fieldContent">
            <label for="id_contributor">{{ site_settings.ConLabelContributor }}</label><br/>
-          <input class="contributor" id="id_contributor" maxlength="256" name="contributor" type="text" />
+          <input class="contributor" id="id_contributor" maxlength="256" name="contributor" type="text" required  />
           <br/>
           <label for="id_contributor_email">{{ site_settings.ConLabelEmail }}</label><br/>
-          <input id="id_contributor_email" name="contributor_email" type="email" />
+          <input id="id_contributor_email" name="contributor_email" type="email" required  />
             <br/>
           <label>{{ site_settings.ComLabelNameOK }}</label>
               <br/>
-          <input id="id_contributor_name_permission_yes" name="contributor_name_permission" type="radio" value="True" {% if record.contributor_name_permission == True %}checked="checked" {% endif %}/> <label for="id_contributor_name_permission_yes">{{ site_settings.NBLabelYes }}</label>
-          <input  id="id_contributor_name_permission_no" name="contributor_name_permission" type="radio" value="False" {% if record.contributor_name_permission == False%}checked="checked" {% endif %}/> <label for="id_contributor_name_permission_no">{{ site_settings.NBLabelNo }}</label>
+          <input id="id_contributor_name_permission_yes" name="contributor_name_permission" type="radio" value="True" required /> <label for="id_contributor_name_permission_yes">{{ site_settings.NBLabelYes }}</label>
+          <input id="id_contributor_name_permission_no" name="contributor_name_permission" type="radio" value="False" required /> <label for="id_contributor_name_permission_no">{{ site_settings.NBLabelNo }}</label>
           </div>
          <div class="step_help">
             {% include 'DataEntry/help/help_contributor.html' %}
@@ -139,7 +129,7 @@
       <div class="fieldContent">
           <p class="common-buttons-block" >
               <input type="hidden" name="rights" value="3" />
-              <input id="upload_submit" type="submit" class="save" value="{{ site_settings.ConLabelButtonUpload }}" />
+              <input id="upload_submit" type="submit" class="save" value="{{ site_settings.ConLabelButtonUpload }}"  onclick="postFile()" />
               <input type="reset" class="save" value="{{ site_settings.ConLabelButtonClear }}" />
           </p>
        </div>
@@ -176,7 +166,6 @@
                        $('#upload_submit').hide();
                        $('#step5help').hide();
                        $('#step5warning').show();
-						gMapInitialize();
                     {% endif %}
                 }else{
                     window.location.reload();
@@ -201,7 +190,6 @@
                $('#form_body').show();
                $('#step2-fulltext').hide();
                $('#id_image_upload_block').show();
-				gMapInitialize();
                $('#upload_submit').hide();
                $('#step5help').hide();
                $('#step5warning').show();
@@ -213,7 +201,6 @@
 			   $('#intro_choice').html('<h1>{{site_settings.ConLabelTellStory }}</h1>');
                $('#step1').show();
                $('#form_body').show();
-				gMapInitialize();
                $('#step2-description').hide();
                $('#id_image_upload_block').hide();
                $('#upload_submit').show();

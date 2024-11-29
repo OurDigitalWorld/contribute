@@ -14,7 +14,7 @@
 
 {{ site_settings.ConLabelReviewEdit }}<br/>
 <hr>
-<form action="/{{ site_identifier }}/contribute/{{ record.id }}/update/" method="post" >
+<form action="{{ site_identifier }}{{ record.id }}/update/" method="post" >
         {% csrf_token %}
     <fieldset class="module">
         <div class="update">
@@ -56,17 +56,6 @@
             </div>
              <div class="step_help">
             {% include 'DataEntry/help/help_text_blocks.html' %}
-             </div>
-        </fieldset>
-
-        <fieldset id="edit2">
-            <div class="fieldContent">
-                <div class="label">{{ site_settings.ConLabelLocation }}</div>
-                {% include 'DataEntry/geography_update_block.html' %}
-                <div id="map_canvas" style="width: 100%; height: 300px"></div>
-            </div>
-             <div class="step_help">
-                {% include 'DataEntry/help/help_geography.html' %}
              </div>
         </fieldset>
 

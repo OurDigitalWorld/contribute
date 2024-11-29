@@ -30,11 +30,13 @@
                 <button id="rotate_link">Rotate image</button>
                      {% endif %}
                 {% elif file_object.record_object_category_id == 2 %}
-                    <button id="view_full">{{ site_settings.ConLabelSeeFull }}</button>
-                    <div id="modal_full" >
-                        <img src="/media/project/{{ file_object.file_name }}"  alt="{{ record.title }}" />
-                    </div>
-                    <br/><br/>
+                    {% if '.jp2' not in file_object.file_name %}
+                        <button id="view_full">{{ site_settings.ConLabelSeeFull }}</button>
+                        <div id="modal_full" >
+                            <img src="/media/project/{{ file_object.file_name }}"  alt="{{ record.title }}" />
+                        </div>
+                        <br/><br/>
+                    {% endif %}
                 {% endif %}
             {% endfor %}
             {% if record.description %}
@@ -46,21 +48,6 @@
             <div id="full_text">{{ record.full_text|linebreaks }}</div>
             {% endif %}
             <br/>
-        {% if geodata %}
-            <dl id="geographyChecklist">
-                {% for geo in geodata %}
-                   <dt>{{ geo.name }}
-                   {% if geo.admin1text %}
-                       , {{ geo.admin1text }}
-                    {% endif %}
-                    , {{ geo.countrytext }}</dt>
-                    <dd>{{ geo.latitude }}, {{ geo.longitude }}</dd>
-                {% endfor %}
-            </dl>
-            <div id="geoLatLng" class="hide-text"> {% for geo in geodata %}{{ geo.latitude }}|{{ geo.longitude }}|{{ geo.name }};{% endfor %}</div>
-            <div id="map_canvas" style="width: 100%; height: 300px"></div>
-            <br/>
-        {% endif %}
             <div class="label">{{ site_settings.ConLabelContributor }}</div>
             <div id="id_contributor">
               {{ record.contributor }}

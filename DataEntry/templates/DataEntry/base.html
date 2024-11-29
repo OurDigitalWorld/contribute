@@ -5,7 +5,7 @@
     {% load static %}
      {% block header %}{% endblock %}
 </head>
-<body{% if geodata %} onload="gMapInitialize()"{% elif gMap %} onload="initializeGeography()"{% endif%}  >
+<body  >
     <div id="c_container">
     {% block body_header %}{% endblock %}
     {% block content %}{% endblock %}
